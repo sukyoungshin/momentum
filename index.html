@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <title> Momentum </title>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <link rel='stylesheet' type='text/css' media='screen' href='src/style.css'>
+  <script defer src='src/index.js'></script>
+</head>
+<body>
+
+  <div class="popup-wrapper">
+    <form class="popup-content" id="loginform">
+      <h1>Welcome! :)</h1>
+      <div class="form-control">
+        <input type="text" placeholder="What's your name?" required maxlength="20">
+        <button type="submit">SUBMIT</button>
+      </div>
+    </form>
+  </div>
+
+  <header>
+    <div class="header">
+      <div class="header-music-player">hi</div>
+      <div class="header-greeting">
+        <span id="message"></span> <!-- 랜덤메시지 -->
+        <span id="greeting"></span>
+      </div>
+    </div>
+  </header>
+  <main>
+    <section>
+      <article class="video-wrapper">
+        <video src="./src/christmas4.mp4" autoplay loop muted></video>
+        <h2>We wish your merry christmas!</h2>
+      </article>
+      <article class="date-wrapper">
+        <p></p>
+        <p></p>
+        <p></p>
+      </article>
+      <article class="todo-wrapper">
+        <form action="" id="todo-form">
+          <input type="text" placeholder="Write a To Do and Press Enter." required>
+          <ul id="todo-list" class="todo-list-wrapper"></ul>
+        </form>
+      </article>
+      <article class="image-wrapper image1"></article>
+      <article class="dday-wrapper">
+        <p>🎄Christmas Day🎄</p>
+        <p></p>
+      </article>
+      <article class="image-wrapper image2"></article>
+      <article class="quote-wrapper">
+        <span></span>
+        <span></span>
+      </article>
+      <article class="image-wrapper image3"></article>
+    </section>
+  </main>
+  <footer>
+    <div class="footer">
+      &copy; 
+      <span class="thisyear"></span>
+      , SuKyoung Shin. All rights are reserved. 
+    </div>
+  </footer>
+
+</body>
+</html>
