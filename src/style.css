@@ -133,6 +133,7 @@ section {
 }
 article {
   position: relative;
+  border-radius: 10px;
 }
 article:not(.quote-wrapper) {
   color: var(--beige);
