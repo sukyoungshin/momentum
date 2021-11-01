@@ -174,8 +174,19 @@ article:not(.video-wrapper):not(.image-wrapper) {
   flex-direction: column;
   gap: 8px;
 }
-.date-wrapper p:first-of-type {
+.date-wrapper p:not(#date p) {
+  font-size: 14px;
+}
+#date p {
   font-size: 18px;
+}
+#weather {
+  flex: 1;
+  display: inline-flex;
+  flex-direction: column;
+  grid-gap: 4px;
+  justify-content: flex-end;
+  align-items: flex-end;
 }
 
 .todo-wrapper {
