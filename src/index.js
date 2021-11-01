@@ -44,9 +44,9 @@ loginInput.addEventListener('input', loginInputHandler);
 
 // date-wrapper
 function HandleCurrentTime () {
-  const date = document.querySelector('#date p:first-of-type');
-  const time = document.querySelector('#date p:nth-of-type(2)');
-  
+  const date = document.querySelector('#date p');
+  const time = document.querySelector('#time p');
+
   const today = new Date(); // 오늘 날짜
   const toDateString = today.toDateString(); // date
   date.innerText = toDateString;
@@ -60,6 +60,34 @@ function HandleCurrentTime () {
 }
 window.addEventListener("load", HandleCurrentTime());
 setInterval(HandleCurrentTime, 1000);
+
+// weather
+function onGeoSuccess(position) {
+  const API_KEY = '6e908cf7ecc925726e41331827f8ede6'; // ed17d8f6a50a842c1d4b16c020da9844
+  const { coords : { latitude : lat, longitude : lon } } = position;
+  const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
+
+  fetch(url)
+  .then(response => response.json())
+  .then(data => {
+    const city = document.querySelector('#weather p:first-of-type');
+    const weather = document.querySelector('#weather p:last-of-type');
+
+    const { name: cityname } = data; // city name
+    const { main: cityweather } = data.weather[0]; // weather
+    const { temp: citytemp } = data.main; // temp
+
+    city.innerText = cityname;
+    weather.innerText = `${citytemp}℃ / ${cityweather}`;
+    } 
+  );
+};
+function onGeoError() {
+  alert('Can\'t find you. No weather for you.');
+};
+
+navigator.geolocation.getCurrentPosition(onGeoSuccess, onGeoError);
+
 
 // 🎄 to do wrapper
 const toDoForm = document.querySelector('#todo-form');
