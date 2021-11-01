@@ -18,7 +18,7 @@ function loginSubmitHandler(e) {
 };  
 
 function paintGreetings(username) {
-  greeting.innerText = `${username}!`;
+  greeting.innerText = `Welcome, ${username} 🎄⛄✨`;
 };
 
 const savedUserName = localStorage.getItem(USERNAME); 
@@ -227,15 +227,12 @@ const todaysQuote = disneyQuotes[INDEX];
 quote.innerText = todaysQuote.quote;
 movie.innerText = todaysQuote.movie;
 
-// 🎄 random image
-const images = ['christmas0.jpg', 'christmas1.jpg', 'christmas2.jpg'];
-const chosenImages = images[Math.floor(Math.random() * images.length)];
-const randomImage = document.createElement('img'); // <img /> created
-randomImage.src = `./src/${chosenImages}`;
-
-// const imageWrapper = document.querySelector('.image-wrapper');
-// imageWrapper.append(randomImage);
+// random background image
+const bgimages = ['bg0.png', 'bg1.jpg', 'bg2.png'];
+const chosenbgimages = bgimages[Math.floor(Math.random() * bgimages.length)];
+document.body.style = `background-image: url(./src/${chosenbgimages})`;
 
 // footer
 const thisyear = document.querySelector('.thisyear');
 thisyear.innerText = new Date().getFullYear();
+
