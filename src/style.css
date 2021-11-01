@@ -308,7 +308,6 @@ article:not(.video-wrapper):not(.image-wrapper) {
 /* footer */
 footer {
   width: 100%;
-  background-color: var(--dark-green);
 }
 .footer {
   margin: 0 auto;
@@ -316,7 +315,7 @@ footer {
   height: 48px;
   color: var(--beige);
   line-height: 48px;
-  text-align: center;
+  text-align: right;
   font-size: 12px;
 }
 
