@@ -61,7 +61,7 @@ function HandleCurrentTime () {
 window.addEventListener("load", HandleCurrentTime());
 setInterval(HandleCurrentTime, 1000);
 
-// 🎄 to do wrapper
+// to do wrapper
 const toDoForm = document.querySelector('#todo-form');
 const toDoInput = toDoForm.querySelector('#todo-form input[type="text"]');
 const toDoList = toDoForm.querySelector('#todo-list');

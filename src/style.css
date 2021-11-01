@@ -209,6 +209,12 @@ article:not(.video-wrapper):not(.image-wrapper) {
   justify-content: space-between;
   grid-gap: 8px;
 }
+.todo-list button[type="button"] {
+  border: none;
+  outline: none;
+  background: transparent;
+}
+
 
 .image-wrapper.image1 {
   grid-column: 3 / 4;
