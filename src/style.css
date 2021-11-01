@@ -194,6 +194,7 @@ article:not(.video-wrapper):not(.image-wrapper) {
 }
 
 .todo-list-wrapper {
+  margin: 8px 0;
   width: 100%;
   display: inline-flex;
   flex-direction: column;

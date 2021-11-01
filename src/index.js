@@ -1,5 +1,5 @@
 // login popup
-const modal = document.querySelector('.popup-wrapper');
+const modal = document.querySelector('#poppup');
 const loginForm = modal.querySelector('#loginform');
 const loginInput = loginForm.querySelector('#loginform input[type="text"]');
 const loginButton = loginForm.querySelector('#loginform button[type="submit"]');
@@ -7,13 +7,13 @@ const greeting = document.querySelector('#greeting');
 
 const HIDDEN = 'hidden'; 
 const ACTIVE= 'active';
-const USERNAME_KEY = 'username';
+const USERNAME = 'username';
 
 function loginSubmitHandler(e) {
   e.preventDefault();
   modal.classList.add(HIDDEN);
   const username = loginInput.value;
-  localStorage.setItem(USERNAME_KEY, username); // localStorage에 유저이름 저장
+  localStorage.setItem(USERNAME, username); // localStorage에 유저이름 저장
   paintGreetings(username);
 };  
 
@@ -21,7 +21,7 @@ function paintGreetings(username) {
   greeting.innerText = `${username}!`;
 };
 
-const savedUserName = localStorage.getItem(USERNAME_KEY); // localStorage에 저장한 유저이름
+const savedUserName = localStorage.getItem(USERNAME); 
 if (savedUserName === null) {
   // show the form
   modal.classList.remove(HIDDEN);
@@ -44,8 +44,8 @@ loginInput.addEventListener('input', loginInputHandler);
 
 // date-wrapper
 function HandleCurrentTime () {
-  const date = document.querySelector('.date-wrapper p:first-of-type');
-  const time = document.querySelector('.date-wrapper p:nth-of-type(2)');
+  const date = document.querySelector('#date p:first-of-type');
+  const time = document.querySelector('#date p:nth-of-type(2)');
   
   const today = new Date(); // 오늘 날짜
   const toDateString = today.toDateString(); // date
@@ -55,22 +55,21 @@ function HandleCurrentTime () {
     hour12: true, 
     hour: "numeric", 
     minute: "numeric"
-  });
-  
+  }); // time
   time.innerText = currentTime;
 }
 window.addEventListener("load", HandleCurrentTime());
 setInterval(HandleCurrentTime, 1000);
 
-// to do wrapper
+// 🎄 to do wrapper
 const toDoForm = document.querySelector('#todo-form');
 const toDoInput = toDoForm.querySelector('#todo-form input[type="text"]');
 const toDoList = toDoForm.querySelector('#todo-list');
-const TODOS_KEY = "todos";
+const TODOS = "todos";
 let toDos = [];
 
 function saveToDos () {
-  localStorage.setItem(TODOS_KEY, JSON.stringify(toDos)); 
+  localStorage.setItem(TODOS, JSON.stringify(toDos)); 
 };
 
 function deleteToDoHandler (e) {
@@ -84,6 +83,8 @@ function addToDoHandler (newToDo) {
   const li = document.createElement('li');
   const span = document.createElement('span');
   const button = document.createElement('button');
+
+  button.setAttribute('type', 'button');
   
   li.id = newToDo.id;
   span.innerText = newToDo.text;
@@ -110,7 +111,7 @@ function submitToDoHandler (e) {
 
 toDoForm.addEventListener('submit', submitToDoHandler);
 
-const savedToDos = localStorage.getItem(TODOS_KEY);
+const savedToDos = localStorage.getItem(TODOS);
 console.log(savedToDos);
 
 if (savedToDos !== null) {
@@ -142,7 +143,6 @@ function xMasCounter() {
 
   clockTitle.innerText = `${days}d ${hoursConvert}h ${minutesConvert}m ${secondsConvert}s`;
 }
-
 window.addEventListener("load", xMasCounter());
 setInterval(xMasCounter, 1000);
 
@@ -190,8 +190,8 @@ const disneyQuotes = [
   }
 ];
 
-const quote = document.querySelector('.quote-wrapper span:first-of-type');
-const movie = document.querySelector('.quote-wrapper span:last-of-type');
+const quote = document.querySelector('#quote span:first-of-type');
+const movie = document.querySelector('#quote span:last-of-type');
 
 const INDEX = Math.floor(Math.random() * disneyQuotes.length); // 0 ~ 명언갯수만큼
 const todaysQuote = disneyQuotes[INDEX];
