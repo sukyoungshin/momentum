@@ -1,15 +1,20 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-theme="light">
 <head>
   <meta charset='utf-8'>
   <meta http-equiv='X-UA-Compatible' content='IE=edge'>
   <title> Momentum </title>
   <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <!-- css -->
   <link rel='stylesheet' type='text/css' media='screen' href='src/style.css'>
+  <!-- Fontawesome -->
+  <script src="https://kit.fontawesome.com/5015f29aa2.js" crossorigin="anonymous"></script>
+  <!-- script -->
   <script defer src='src/index.js'></script>
 </head>
 <body>
 
+  <!-- popup -->
   <div class="popup-wrapper" id="poppup">
     <form class="popup-content" id="loginform">
       <h1>Welcome! :)</h1>
@@ -19,61 +24,85 @@
       </div>
     </form>
   </div>
+  <!-- // popup -->
 
-  <header>
-    <div class="header">
-      <div class="header-music-player">
-        <audio src="./src/christmas1.mp3" autoplay controls loop></audio>
-      </div>
-      <div class="header-greeting">
-        <span id="greeting"></span>
-      </div>
-    </div>
-  </header>
+  <!-- main -->
   <main>
     <section>
-      <article class="video-wrapper">
-        <video src="./src/christmas4.mp4" autoplay loop muted></video>
-        <h2>We wish your merry christmas!</h2>
-      </article>
-      <article class="date-wrapper" id="date-wrapper">
+      <article class="date-wrapper">
+
         <div id="date">
           <p></p>
         </div>
         <div id="time">
           <p></p>
         </div>
-        <div id="weather">
-          <p></p>
-          <p></p>
-        </div>
+
       </article>
       <article class="todo-wrapper">
-        <form action="" id="todo-form">
+        <form id="todo-form">
           <input type="text" placeholder="Write a To Do and Press Enter." required>
           <ul id="todo-list" class="todo-list-wrapper"></ul>
         </form>
       </article>
-      <article class="image-wrapper image1"></article>
-      <article class="dday-wrapper">
-        <p>🎄Christmas Day🎄</p>
+      <article class="quote-wrapper">비어있음</article>
+      <article class="weekly-weather-wrapper" id="weather">
         <p></p>
       </article>
-      <article class="image-wrapper image2"></article>
-      <article class="quote-wrapper" id="quote">
+      <article class="location-wrapper" id="city">
+        <span></span>
+        <span id="getLocation"> 
+          <button type="button">
+            <i class="fas fa-map-marker-alt"></i>
+          </button>
+        </span>
+      </article>
+      <article class="video-wrapper">
+        <video src="./src/christmas4.mp4" autoplay loop muted></video>
+        <h2>
+          merry christmas
+          <span id="dday">D-day</span>
+        </h2>
+      </article>
+      <article class="image-wrapper" id="random-image">
         <span></span>
         <span></span>
       </article>
-      <article class="image-wrapper image3"></article>
+      <article class="profile-wrapper">
+        <figure>
+          <img src="./src/profile.jpg" alt="프로필 사진">
+        </figure>
+        <div class="welcome-message">
+          <span id="greeting"></span>
+        </div>
+
+      </article>
+      <article class="music-player-wrapper">
+        <div class="music-player">
+          <audio src="./src/christmas1.mp3" autoplay controls loop></audio>
+        </div>
+      </article>
+      <article class="footer-wrapper">
+        <div class="footer">
+          &copy; 
+          <span class="thisyear"></span>
+          , SuKyoung Shin. All rights are reserved. 
+        </div>
+      </article>
+      <article class="theme-swtich-wrapper">
+        <label for="checkbox" class="switch">
+          <input type="checkbox" id="checkbox">
+          <div class="slider round"></div>
+        </label>
+        <p>
+          <i class="fas fa-sun"></i>
+          /
+          <i class="fas fa-moon"></i>
+        </p>
+        
+      </article>
     </section>
   </main>
-  <footer>
-    <div class="footer">
-      &copy; 
-      <span class="thisyear"></span>
-      , SuKyoung Shin. All rights are reserved. 
-    </div>
-  </footer>
 
 </body>
 </html>

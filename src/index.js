@@ -9,16 +9,11 @@ const HIDDEN = 'hidden';
 const ACTIVE= 'active';
 const USERNAME = 'username';
 
-function loginSubmitHandler(e) {
-  e.preventDefault();
-  modal.classList.add(HIDDEN);
-  const username = loginInput.value;
-  localStorage.setItem(USERNAME, username); // localStorage에 유저이름 저장
-  paintGreetings(username);
-};  
-
 function paintGreetings(username) {
-  greeting.innerText = `Welcome, ${username} 🎄⛄✨`;
+  const randomEmojis = ['😍','😎','😝','🎅','🖖','👋','🎄','✨','🍀', '🦄'];
+  const emojiIndex = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
+
+  greeting.innerText = `${username} ${emojiIndex}`;
 };
 
 const savedUserName = localStorage.getItem(USERNAME); 
@@ -39,55 +34,107 @@ function loginInputHandler () {
     loginButton.classList.remove(ACTIVE);
   }
 };
+
+function loginSubmitHandler(e) {
+  e.preventDefault();
+  modal.classList.add(HIDDEN);
+  const username = loginInput.value;
+  localStorage.setItem(USERNAME, username); // localStorage에 유저이름 저장
+  paintGreetings(username);
+};  
+
 loginInput.addEventListener('input', loginInputHandler);
 
+
+// random background color
+const colors = ["#ef5777","#9198e5", "#575fcf","#4bcffa","#0be881","#f53b57","#3c40c6","#00d8d6","#05c46b","#e66465","#d2dae2","#485460","#ffa801","#ffd32a"];
+const a = colors[Math.floor(Math.random() * colors.length)];
+const b = colors[Math.floor(Math.random() * colors.length)];
+if (a !== b) {
+  // if the selected colors are different
+  document.body.style.background = `linear-gradient(45deg, ${a}, ${b})`;
+} else {
+  // if the selected colors are same, show the following (default)
+  document.body.style.background = `linear-gradient(45deg, #e66465, #9198e5)`;
+}
 
 // date-wrapper
 function HandleCurrentTime () {
   const date = document.querySelector('#date p');
   const time = document.querySelector('#time p');
 
-  const today = new Date(); // 오늘 날짜
-  const toDateString = today.toDateString(); // date
-  date.innerText = toDateString;
+  const today = new Date();
+  const thisYear = today.getFullYear(); // 연도
+
+  const thisDay = today.getDay(); // 날짜
+
+
+  const dateIndex = today.getDate(); // 요일
+  const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
+  let thisDate = weekdays[dateIndex]; 
+
+  const monthIndex = today.getMonth(); // 월
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  let thisMonth = months[monthIndex]; // 현재 월
   
-  const currentTime = today.toLocaleTimeString('ko-KR', { 
+  date.innerText = `${thisMonth} ${thisDay}, ${thisYear} ( ${thisDate} )`;
+  
+  const currentTime = today.toLocaleTimeString('en-US', { 
     hour12: true, 
     hour: "numeric", 
     minute: "numeric"
   }); // time
-  time.innerText = currentTime;
+  time.innerText = `${currentTime}`;
 }
 window.addEventListener("load", HandleCurrentTime());
 setInterval(HandleCurrentTime, 1000);
 
 // weather
-function onGeoSuccess(position) {
-  const API_KEY = '6e908cf7ecc925726e41331827f8ede6'; // ed17d8f6a50a842c1d4b16c020da9844
-  const { coords : { latitude : lat, longitude : lon } } = position;
-  const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
+function geoFindMe() {
 
-  fetch(url)
-  .then(response => response.json())
-  .then(data => {
-    const city = document.querySelector('#weather p:first-of-type');
-    const weather = document.querySelector('#weather p:last-of-type');
+  function onGeoSuccess(position) {
+    const API_KEY = '6e908cf7ecc925726e41331827f8ede6'; // ed17d8f6a50a842c1d4b16c020da9844
+    const { coords : { latitude : lat, longitude : lon } } = position;
+    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
 
-    const { name: cityname } = data; // city name
-    const { main: cityweather } = data.weather[0]; // weather
-    const { temp: citytemp } = data.main; // temp
+    fetch(url)
+    .then(response => response.json())
+    .then(data => {
+        const city = document.querySelector('#city span:first-child');
+        const weather = document.querySelector('#weather p');
+      
+        const { country } = data.sys; // country
+        const { name: cityname } = data; // city name
+        const { main: cityweather } = data.weather[0]; // weather
+        const { temp: citytemp } = data.main; // temp
+    
+        city.innerText = `${cityname}, ${country} `;
+        weather.innerText = `${citytemp}℃ / ${cityweather}`;
+      } 
+    );
+  };
 
-    city.innerText = cityname;
-    weather.innerText = `${citytemp}℃ / ${cityweather}`;
-    } 
-  );
+  function onGeoError() {
+    alert('위치를 확인할 수 없습니다.');
+  };
+
+  if(!navigator.geolocation) {
+    alert('Geolocation is not supported by your browser');
+  } else {
+    const city = document.querySelector('#city span:first-child');
+    const weather = document.querySelector('#weather p');
+
+    city.innerText = 'Loading...';
+    weather.innerText = 'Loading...';
+    navigator.geolocation.getCurrentPosition(onGeoSuccess, onGeoError);
+  }
+
 };
-function onGeoError() {
-  alert('Can\'t find you. No weather for you.');
-};
+geoFindMe(); // 위치불러오기 (브라우저 오픈되었을때)
 
-navigator.geolocation.getCurrentPosition(onGeoSuccess, onGeoError);
-
+// ✅ 수정필요
+// const getLocationBtn = document.querySelector('#getLocation button[type="button"]');
+// getLocationBtn.addEventListener('click', geoFindMe); // 버튼눌러서 위치 다시 불러오기
 
 //  to do wrapper
 const toDoForm = document.querySelector('#todo-form');
@@ -149,7 +196,7 @@ if (savedToDos !== null) {
 }
 
 // d day counter
-const clockTitle = document.querySelector(".dday-wrapper p:last-of-type");
+const clockTitle = document.querySelector("#dday");
 
 function xMasCounter() {
   const today = new Date();
@@ -173,6 +220,7 @@ function xMasCounter() {
 }
 window.addEventListener("load", xMasCounter());
 setInterval(xMasCounter, 1000);
+
 
 // random quote
 const disneyQuotes = [
@@ -218,8 +266,15 @@ const disneyQuotes = [
   }
 ];
 
-const quote = document.querySelector('#quote span:first-of-type');
-const movie = document.querySelector('#quote span:last-of-type');
+// random image (background)
+const randomImage = document.querySelector('.image-wrapper');
+const images = ['christmas0.jpg', 'christmas1.jpg', 'christmas2.jpg', 'christmas3.jpg'];
+const chosenImages = images[Math.floor(Math.random() * images.length)];
+randomImage.style = `background-image: url(./src/${chosenImages})`;
+
+// random quote
+const quote = document.querySelector('#random-image span:first-child');
+const movie = document.querySelector('#random-image span:last-child');
 
 const INDEX = Math.floor(Math.random() * disneyQuotes.length); // 0 ~ 명언갯수만큼
 const todaysQuote = disneyQuotes[INDEX];
@@ -227,12 +282,18 @@ const todaysQuote = disneyQuotes[INDEX];
 quote.innerText = todaysQuote.quote;
 movie.innerText = todaysQuote.movie;
 
-// random background image
-const bgimages = ['bg0.png', 'bg1.jpg', 'bg2.png'];
-const chosenbgimages = bgimages[Math.floor(Math.random() * bgimages.length)];
-document.body.style = `background-image: url(./src/${chosenbgimages})`;
-
 // footer
 const thisyear = document.querySelector('.thisyear');
 thisyear.innerText = new Date().getFullYear();
 
+const toggleSwitch = document.querySelector('#checkbox');
+function switchTheme(e) {
+  if (e.target.checked) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    localStorage.setItem('theme', 'dark');
+  } else {
+    document.documentElement.setAttribute('data-theme', 'light');
+    localStorage.setItem('theme', 'light');
+  }
+}
+toggleSwitch.addEventListener('change', switchTheme, false);
