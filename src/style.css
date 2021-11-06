@@ -121,7 +121,7 @@ article {
   color: var(--color);
   /* Glassmorphism effect */
   background: var(--bg-color);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(10px);
   /* hover effect */
   transition: all 0.4s;
 }
@@ -144,11 +144,35 @@ article:hover {
 .todo-wrapper {
   grid-column: 9 / 13;
   grid-row: 1 / 4;
-  overflow: auto; /* 길어지면 자동스크롤 생성 */
+}
+.todo-wrapper h2 {
+  height: 32px;
 }
 .todo-wrapper form {
+  margin-top: 16px;
   width: 100%;
+  height: calc(100% - 48px);
+  overflow: auto; /* 길어지면 자동스크롤 생성 */
+
+  display: inline-flex;
+  flex-direction: column;
+  gap: 16px;
+  grid-gap: 16px;
 }
+
+/* custom scroll바 */
+.todo-wrapper form::-webkit-scrollbar{
+  width: 8px;
+  height: 8px;
+}
+.todo-wrapper form::-webkit-scrollbar-track{
+  /* background: #f1f1f1;  */
+  background: transparent; 
+}
+.todo-wrapper form::-webkit-scrollbar-thumb{
+  background: var(--bg-color); 
+}
+
 
 .todo-wrapper input[type="text"] {
   width: 100%;
@@ -159,7 +183,6 @@ article:hover {
   border-bottom: 1px solid #fff;
 
   color: var(--color);
-  font-size: 20px;
 }
 .todo-wrapper input[type="text"]::placeholder {
   color: rgba(255, 255, 255, 0.3);
@@ -175,15 +198,65 @@ article:hover {
   grid-gap: 4px;
 }
 .todo-list-wrapper li {
-  height: 32px;
+  min-height: 32px;
+  height: fit-content;
   align-items: center;
   border-bottom: 1px solid rgba(255,255,255,0.1);
 
   display: inline-flex;
   flex-direction: row;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
-.todo-list-wrapper li button[type="button"] {
+/* checkbox */
+.todo-list-wrapper input[type="checkbox"] {
+  display: none;
+}
+.todo-list-wrapper input[type="checkbox"]:checked + label::before,
+.todo-list-wrapper input[type="checkbox"]:not(:checked) + label::before {
+  margin: 0;
+  padding: 0;
+}
+/* ✅ height 깜빡이는 현상있어서 수정필요  */
+.todo-list-wrapper input[type="checkbox"]:not(:checked) + label::before {
+  content: '';
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+
+  font-size: 0px;
+  border: 1px solid var(--bg-color);
+  background-color: transparent;
+  cursor: pointer;
+}
+.todo-list-wrapper input[type="checkbox"]:checked + label::before {
+  content: '\f00c';/*폰트어썸 유니코드*/
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
+  
+  font-size: 12px;
+  color: var(--color);
+  text-align: center;
+  font-family: 'Font Awesome 5 free'; /*폰트어썸 아이콘 사용*/
+  font-weight: 900;/*폰트어썸 설정*/
+
+  border: 1px solid var(--bg-color);
+  background-color: var(--bg-color);
+}
+/* 체크되면 할일목록에 가운데 선 */
+.todo-list-wrapper input[type="checkbox"]:checked ~ span {
+  text-decoration: line-through;
+}
+
+/* span */
+.todo-list-wrapper span {
+  flex: 1;
+  padding-left: 16px;
+}
+/* delete button */
+.todo-list-wrapper button[type="button"] {
   width: 24px;
   height: 24px;
 
@@ -191,6 +264,7 @@ article:hover {
   outline: none;
   background: transparent;
 }
+
 
 .quote-wrapper {
   grid-column: 1 / 4;
@@ -396,13 +470,13 @@ article:hover {
   background-color: white;
   transition: all 0.4s;
 }
-input[type="checkbox"]:checked + .slider {
+.switch input[type="checkbox"]:checked + .slider {
   background-color: var(--togglebg);
 }
-input[type="checkbox"]:focus + .slider {
+.switch input[type="checkbox"]:focus + .slider {
   box-shadow: 0 0 1px var(--togglebg);;
 }
-input[type="checkbox"]:checked + .slider:before {
+.switch input[type="checkbox"]:checked + .slider:before {
   -webkit-transform: translateX(26px);
   -ms-transform: translateX(26px);
   transform: translateX(26px);

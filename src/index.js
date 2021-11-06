@@ -42,7 +42,6 @@ function loginSubmitHandler(e) {
   localStorage.setItem(USERNAME, username); // localStorage에 유저이름 저장
   paintGreetings(username);
 };  
-
 loginInput.addEventListener('input', loginInputHandler);
 
 
@@ -156,17 +155,29 @@ function deleteToDoHandler (e) {
 
 function addToDoHandler (newToDo) {
   const li = document.createElement('li');
+  const checkbox = document.createElement('input');
+  const label = document.createElement('label');
   const span = document.createElement('span');
   const button = document.createElement('button');
+  const randomId = Math.floor(Math.random() * 1000); // 매번 새로운 id명 생성하여 부여
 
+  // 속성값 부여
+  checkbox.setAttribute('type', 'checkbox');
   button.setAttribute('type', 'button');
-  
-  li.id = newToDo.id;
+
+  // id 및 클래스명 부여
+  li.id = newToDo.id; // li에 id값 부여
+  li.classList.add('todo-list'); // li 클래스 부여
+  checkbox.id = `${randomId}`;
+  label.setAttribute('for', `${randomId}`); // checkbox와 label 연동
+
   span.innerText = newToDo.text;
   button.innerText = '❌';
   button.addEventListener('click', deleteToDoHandler);
 
-  li.classList.add('todo-list');
+  // li 태그 안에 DOM 요소들 넣고
+  li.append(checkbox);
+  li.append(label);
   li.append(span);
   li.append(button);
   toDoList.append(li);
@@ -222,7 +233,7 @@ window.addEventListener("load", xMasCounter());
 setInterval(xMasCounter, 1000);
 
 
-// random quote
+// random quote & image 기능
 const disneyQuotes = [
   {
     quote: 'Because when I look at you, I can feel it. And I look at you and I’m home.',
@@ -282,18 +293,34 @@ const todaysQuote = disneyQuotes[INDEX];
 quote.innerText = todaysQuote.quote;
 movie.innerText = todaysQuote.movie;
 
-// footer
-const thisyear = document.querySelector('.thisyear');
-thisyear.innerText = new Date().getFullYear();
 
+// Theme기능 (dark모드)
+// 토글 스위치의 확인 및 확인 해제
+// 향후 방문을 위해 사용자 기본 설정 저장
 const toggleSwitch = document.querySelector('#checkbox');
+const THEME = 'theme';
+
 function switchTheme(e) {
   if (e.target.checked) {
     document.documentElement.setAttribute('data-theme', 'dark');
-    localStorage.setItem('theme', 'dark');
+    localStorage.setItem(THEME, 'dark');
   } else {
     document.documentElement.setAttribute('data-theme', 'light');
-    localStorage.setItem('theme', 'light');
+    localStorage.setItem(THEME, 'light');
   }
-}
+};
 toggleSwitch.addEventListener('change', switchTheme, false);
+
+// 향후 방문을 위해 사용자 기본 설정 저장
+const currentTheme = localStorage.getItem(THEME);
+if (currentTheme) {
+  document.documentElement.setAttribute('data-theme', currentTheme);
+
+  if (currentTheme === 'dark') {
+    toggleSwitch.checked = true;
+  }
+};
+
+// footer
+const thisyear = document.querySelector('.thisyear');
+thisyear.innerText = new Date().getFullYear();
