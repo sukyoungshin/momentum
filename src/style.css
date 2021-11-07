@@ -353,7 +353,7 @@ article:hover {
   display: inline-flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
 }
 .weekly-weather div.today-weather-wrapper {
   border-bottom: 1px solid var(--bg-color);
@@ -364,6 +364,8 @@ article:hover {
   text-transform: capitalize;
 }
 .weekly-weather div:not(.today-weather-wrapper) {
+  grid-gap: 24px;
+  gap: 24px;
   transition: all 0.5s;
 }
 .weekly-weather div:not(.today-weather-wrapper):hover {
@@ -371,7 +373,6 @@ article:hover {
   background-color: var(--hover-bgcolor);
 }
 .weekly-weather div:not(.today-weather-wrapper) span:first-child {
-  margin-right: 24px;
   font-weight: 600;
 }
 
