@@ -16,6 +16,7 @@ body {
 :root {
   --transparent-color: rgba(255, 255, 255, 0.3);
   --popup-bgcolor: rgba(0,0,0,0.8);
+  --hover-bgcolor: rgba(255, 255, 255, 0.1);
 }
 [data-theme="light"] {
   --bg-color: rgba(255, 255, 255, 0.2);
@@ -213,7 +214,7 @@ article:hover {
 }
 .todo-list-wrapper li:hover {
   border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--hover-bgcolor);
 }
 /* checkbox */
 .todo-list-wrapper input[type="checkbox"] {
@@ -298,7 +299,7 @@ article:hover {
 }
 .dummy-data-wrapper li:hover {
   border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--hover-bgcolor);
 }
 /* custom scroll바 */
 .dummy-data-wrapper ul::-webkit-scrollbar{
@@ -320,9 +321,60 @@ article:hover {
   grid-row: 2 / 4;
 
   display: inline-flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: row;
+  align-items: flex-start;
 }
+.weekly-weather {
+  width: 100%;
+  height: 100%;
+
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+
+  overflow: auto;
+}
+/* custom scroll바 */
+.weekly-weather::-webkit-scrollbar{
+  width: 8px;
+  height: 8px;
+}
+.weekly-weather::-webkit-scrollbar-track{
+  background: transparent; 
+}
+.weekly-weather::-webkit-scrollbar-thumb{
+  background: var(--bg-color); 
+}
+
+.weekly-weather div {
+  width: 100%;
+
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.weekly-weather div.today-weather-wrapper {
+  border-bottom: 1px solid var(--bg-color);
+}
+.weekly-weather div.today-weather-wrapper span {
+  font-size: 18px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+.weekly-weather div:not(.today-weather-wrapper) {
+  transition: all 0.5s;
+}
+.weekly-weather div:not(.today-weather-wrapper):hover {
+  border-radius: 8px;
+  background-color: var(--hover-bgcolor);
+}
+.weekly-weather div:not(.today-weather-wrapper) span:first-child {
+  margin-right: 24px;
+  font-weight: 600;
+}
+
 .location-wrapper {
   grid-column: 4 / 9;
 

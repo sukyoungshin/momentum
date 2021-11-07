@@ -92,37 +92,81 @@ setInterval(currentTimeHandler, 1000);
 // geolocation data-fetch (API)
 function geoFindMe() {
 
-  function onGeoSuccess(position) {
-    const API_KEY = 'ed17d8f6a50a842c1d4b16c020da9844'; 
-    const { coords : { latitude : lat, longitude : lon } } = position;
-    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
-
+  function getCurrentWeather(url) {
     fetch(url)
     .then(response => response.json())
     .then(data => {
+        // DOM element
         const city = document.querySelector('#city span:first-child');
-        const weather = document.querySelector('#weather p');
+        const todayweather = document.querySelector('#weather span');
         const weatherIconWrapper = document.querySelector('#weather');
         const iconImg = document.createElement('img');
       
+        // data fetch
         const { country } = data.sys; // country
         const { name: cityname } = data; // city name
         const { description: cityweather } = data.weather[0]; // weather
         const { temp: citytemp } = data.main; // temp
         const { icon } = data.weather[0]; // weather icon
         const iconURL = `http://openweathermap.org/img/wn/${icon}.png`;
-
         weatherIconWrapper.append(iconImg);
         iconImg.src = iconURL;
-        iconImg.setAttribute('alt', '오늘의 날씨'); // 접근성고려
-    
-        city.innerText = `${cityname}, ${country} `;
-        weather.innerHTML = `${citytemp}℃ / ${cityweather}`;
+        iconImg.setAttribute('alt', '오늘의 날씨'); 
+        
+        // data binding
+        city.innerText = `${cityname}, ${country}`; // 도시이름 출력
+        todayweather.innerHTML = `${citytemp}℃ / ${cityweather}`; // 오늘날씨 출력
       } 
     );
+  }
+
+  function getForecaseWeather(url) {
+    fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      const { daily } = data; // forecast daily data
+      
+      for (let i = 1; i < daily.length; i++) {
+        const { main : weeklyWeather, icon } = daily[i].weather[0]; // weeklyWeather: 날씨 , icon: 아이콘
+        const weeklyWeatherWrapper = document.querySelector('#weekly-weather');
+        const div = document.createElement('div');
+        const span1 = document.createElement('span');
+        const span2 = document.createElement('span');
+        const iconImg = document.createElement('img');
+        const iconURL = `http://openweathermap.org/img/wn/${icon}.png`;
+        iconImg.src = iconURL;
+        iconImg.setAttribute('alt', '이번주 날씨'); 
+
+        const today = new Date();
+        const month = today.getMonth() + 1; 
+        const weeklyDate = today.getDate() + i; // 날짜
+
+        // ✅ 수정필요
+        const weeklyDay = today.getDay() + i - 1; // 요일
+
+        span1.innerText = `${month}/${weeklyDate}`;
+        span2.innerText = `${weeklyWeather}`;
+
+        div.append(span1);
+        div.append(span2);
+        div.append(iconImg);
+        weeklyWeatherWrapper.append(div);
+      }
+
+    })
+  }
+
+  function handleGeoSuccess(position) {
+    const API_KEY = 'ed17d8f6a50a842c1d4b16c020da9844'; 
+    const { coords : { latitude : lat, longitude : lon } } = position;
+    const urlCurrentWeather = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
+    const urlForecastWeather = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=hourly,minutely&appid=${API_KEY}`;
+
+    getCurrentWeather(urlCurrentWeather);// current weather
+    getForecaseWeather(urlForecastWeather); // 7days forecast weather
   };
 
-  function onGeoError() {
+  function handleGeoFail() {
     alert('위치를 확인할 수 없습니다.');
   };
 
@@ -130,14 +174,16 @@ function geoFindMe() {
     alert('Geolocation is not supported by your browser');
   } else {
     const city = document.querySelector('#city span:first-child');
-    const weather = document.querySelector('#weather p');
+    const weather = document.querySelector('#weather span');
 
     city.innerText = 'Loading...';
     weather.innerText = 'Loading...';
-    navigator.geolocation.getCurrentPosition(onGeoSuccess, onGeoError);
+    navigator.geolocation.getCurrentPosition(handleGeoSuccess, handleGeoFail);
   }
 };
 geoFindMe();
+
+
 
 // ✅ geo location 버튼누르면 위치 다시 불러오기 기능 추가
 // const getLocationBtn = document.querySelector('#getLocation button[type="button"]');
@@ -214,7 +260,7 @@ if (savedToDos !== null) {
   parsedToDos.forEach(addToDoHandler);
 };
 
-// dummy text data-fetch (API)
+// ✅ dummy text data-fetch (API)  ==> news Data 받아오고 싶은데
 // cors 이슈란 https://evan-moon.github.io/2020/05/21/about-cors/
 // cors를 해결하기 위한 방법
 // - 서버에서 처리를 하는 방법이 제일 편하다
@@ -332,7 +378,7 @@ const todaysQuote = disneyQuotes[INDEX];
 quote.innerText = todaysQuote.quote;
 movie.innerText = todaysQuote.movie;
 
-// music player
+// ✅ music player
 
 
 
