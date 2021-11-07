@@ -214,29 +214,36 @@ if (savedToDos !== null) {
   parsedToDos.forEach(addToDoHandler);
 };
 
-// news article data-fetch (API)
-// https://evan-moon.github.io/2020/05/21/about-cors/
-function getNews() {
-  const API_KEY = `pub_2108f64a6bce71442e54498547e6103adde2`;
-  const url = `https://newsdata.io/api/1/news?apikey=${API_KEY}&country=kr`; //&language=ko
-  const headers = new Headers({
-    'Content-Type': 'text/xml',
-    'Access-Control-Allow-Origin' : 'https://sukyoungshin.github.io/',
-    'mode' : 'no-cors'
-  });
+// dummy text data-fetch (API)
+// cors 이슈란 https://evan-moon.github.io/2020/05/21/about-cors/
+// cors를 해결하기 위한 방법
+// - 서버에서 처리를 하는 방법이 제일 편하다
+// - 클라이언트 단에서 프록시를 이용해 해결할 수는 있다.
+// - cra면 패키지 제이슨 파일에 프록시 주소 쓰고 api요청하면 그 주소로 요청을 한다.
+// 바닐라JS인데 가능할까요? 데브서버를 띄우면 가능하긴한데 그 상황이면 엔진엑스 두고 그거 통해서 리버스 프록시 쓰는게 더 편할꺼같긴 하네요
 
-  fetch(url, headers)
-    .then(response => {response.json()})
-    .then(data => {
-      // const { title, link, description, pubDate } = data.results;
+// proxy 설정하기 (proxy뜻 : 대리인, 경유서버같은거에요 요청 고대로 전달해주는거)
+// - 밸로퍼트 : https://react.vlpt.us/redux-middleware/09-cors-and-proxy.html
+// - https://gist.github.com/jesperorb/6ca596217c8dfba237744966c2b5ab1e
+function getFakeData() {
+  const posts = 'posts'; // query
+  const url = `https://jsonplaceholder.typicode.com/${posts}`;
 
-      console.log(data);
-      }
-    );
+  fetch(url)
+  .then(response => response.json())
+  .then(json => {
+    const dummy = document.querySelector('#dummy ul');
+    
+    json.map((item) => {
+      const { title } = item;
+      const li = document.createElement('li');
+      li.innerText += `${title}`;
+      dummy.append(li);
+    })
 
-
-}
-getNews();
+  })
+};
+getFakeData();
 
 // christmas d-day counter
 const clockTitle = document.querySelector("#dday");
@@ -324,6 +331,9 @@ const todaysQuote = disneyQuotes[INDEX];
 
 quote.innerText = todaysQuote.quote;
 movie.innerText = todaysQuote.movie;
+
+// music player
+
 
 
 // Theme기능 (dark모드)
