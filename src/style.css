@@ -146,10 +146,10 @@ article:hover {
   grid-row: 1 / 4;
 }
 .todo-wrapper h2 {
+  margin: 0 0 16px 0;
   height: 32px;
 }
 .todo-wrapper form {
-  margin-top: 16px;
   width: 100%;
   height: calc(100% - 48px);
   overflow: auto; /* 길어지면 자동스크롤 생성 */
@@ -212,6 +212,7 @@ article:hover {
   transition: all 0.4s;
 }
 .todo-list-wrapper li:hover {
+  border-radius: 8px;
   background-color: rgba(255, 255, 255, 0.1);
 }
 /* checkbox */
@@ -260,6 +261,7 @@ article:hover {
 .todo-list-wrapper span {
   flex: 1;
   padding-left: 16px;
+  font-size: 14px;
 }
 
 /* delete button */
@@ -273,10 +275,45 @@ article:hover {
 }
 
 
-.quote-wrapper {
+.dummy-data-wrapper {
   grid-column: 1 / 4;
   grid-row: 2 / 5;
 }
+.dummy-data-wrapper h2 {
+  margin: 0 0 16px 0;
+}
+.dummy-data-wrapper ul {
+  list-style: none;
+  padding: 0;
+  height: calc(100% - 32px);
+  font-size: 14px;
+  overflow: auto;
+}
+.dummy-data-wrapper li {
+  padding: 4px 8px;
+  min-height: 32px;
+  height: fit-content;
+  font-size: 14px;
+  transition: all 0.5s;
+}
+.dummy-data-wrapper li:hover {
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+/* custom scroll바 */
+.dummy-data-wrapper ul::-webkit-scrollbar{
+  width: 8px;
+  height: 8px;
+}
+.dummy-data-wrapper ul::-webkit-scrollbar-track{
+  /* background: #f1f1f1;  */
+  background: transparent; 
+}
+.dummy-data-wrapper ul::-webkit-scrollbar-thumb{
+  background: var(--bg-color); 
+}
+
+
 
 .weekly-weather-wrapper {
   grid-column: 4 / 9;
@@ -425,6 +462,9 @@ article:hover {
   justify-content: center;
 }
 
+
+
+
 .footer-wrapper {
   grid-column: 5 / 9;
 
@@ -482,10 +522,10 @@ article:hover {
   transition: all 0.4s;
 }
 .switch input[type="checkbox"]:checked + .slider {
-  background-color: var(--togglebg);
+  background-color: var(--bg-color);
 }
 .switch input[type="checkbox"]:focus + .slider {
-  box-shadow: 0 0 1px var(--togglebg);;
+  background-color: var(--bg-color);
 }
 .switch input[type="checkbox"]:checked + .slider:before {
   -webkit-transform: translateX(26px);
