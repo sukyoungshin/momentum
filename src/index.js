@@ -5,71 +5,72 @@ const loginInput = loginForm.querySelector('#loginform input[type="text"]');
 const loginButton = loginForm.querySelector('#loginform button[type="submit"]');
 const greeting = document.querySelector('#greeting');
 
-const HIDDEN = 'hidden'; 
-const ACTIVE= 'active';
-const USERNAME = 'username';
+const HIDDEN_KEY = 'hidden'; 
+const ACTIVE_KEY= 'active';
+const USERNAME_KEY = 'username';
+
+function btnColorChange () {
+  if (loginInput.value.length >= 1) {
+    loginButton.classList.add(ACTIVE_KEY);
+  } else {
+    loginButton.classList.remove(ACTIVE_KEY);
+  }
+};
 
 function paintGreetings(username) {
   const randomEmojis = ['😍','😎','😝','🎅','🖖','👋','🎄','✨','🍀', '🦄'];
   const emojiIndex = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
-
   greeting.innerText = `${username} ${emojiIndex}`;
-};
-
-const savedUserName = localStorage.getItem(USERNAME); 
-if (savedUserName === null) {
-  // show the form
-  modal.classList.remove(HIDDEN);
-  loginForm.addEventListener('submit', loginSubmitHandler);
-} else {
-  //show the greeting
-  modal.classList.add(HIDDEN);
-  paintGreetings(savedUserName);
-};
-
-function loginInputHandler () {
-  if (loginInput.value.length >= 1) {
-    loginButton.classList.add(ACTIVE);
-  } else {
-    loginButton.classList.remove(ACTIVE);
-  }
 };
 
 function loginSubmitHandler(e) {
   e.preventDefault();
-  modal.classList.add(HIDDEN);
+  modal.classList.add(HIDDEN_KEY);
   const username = loginInput.value;
-  localStorage.setItem(USERNAME, username); // localStorage에 유저이름 저장
-  paintGreetings(username);
+  localStorage.setItem(USERNAME_KEY, username); // localStorage에 유저이름 저장
+  paintGreetings(username); // 입력받은 username 화면에 나타냄
 };  
-loginInput.addEventListener('input', loginInputHandler);
 
+// 향후 방문을 위해 사용자 기본 설정 저장 (username)
+const savedUserName = localStorage.getItem(USERNAME_KEY); 
+if (savedUserName === null) {
+  // if username didn't visit before, show the login modal
+  modal.classList.remove(HIDDEN_KEY);
+  loginInput.addEventListener('input', btnColorChange); 
+  loginForm.addEventListener('submit', loginSubmitHandler); 
+} else {
+  // if username visited once, show users the greeting message
+  modal.classList.add(HIDDEN_KEY);
+  paintGreetings(savedUserName);
+};
 
 // random background color
-const colors = ["#ef5777","#9198e5", "#575fcf","#4bcffa","#0be881","#f53b57","#3c40c6","#00d8d6","#05c46b","#e66465","#d2dae2","#485460","#ffa801","#ffd32a"];
-const a = colors[Math.floor(Math.random() * colors.length)];
-const b = colors[Math.floor(Math.random() * colors.length)];
-if (a !== b) {
-  // if the selected colors are different
-  document.body.style.background = `linear-gradient(45deg, ${a}, ${b})`;
-} else {
-  // if the selected colors are same, show the following (default)
-  document.body.style.background = `linear-gradient(45deg, #e66465, #9198e5)`;
-}
+function randomBgColor () {
+  const colors = ["#ef5777","#9198e5", "#575fcf","#4bcffa","#0be881","#f53b57","#3c40c6","#00d8d6","#05c46b","#e66465","#d2dae2","#485460","#ffa801","#ffd32a"];
+  const a = colors[Math.floor(Math.random() * colors.length)];
+  const b = colors[Math.floor(Math.random() * colors.length)];
 
-// date-wrapper
-function HandleCurrentTime () {
+  if (a !== b) {
+    // if the selected colors are different
+    document.body.style.background = `linear-gradient(45deg, ${a}, ${b})`;
+  } else {
+    // if the selected colors are same, show the following (default)
+    document.body.style.background = `linear-gradient(45deg, #e66465, #9198e5)`;
+  }
+};
+window.addEventListener("load", randomBgColor());
+
+// current time
+function currentTimeHandler () {
   const date = document.querySelector('#date p');
   const time = document.querySelector('#time p');
 
   const today = new Date();
   const thisYear = today.getFullYear(); // 연도
-
-  const thisDay = today.getDay(); // 날짜
-
-
-  const dateIndex = today.getDate(); // 요일
+  const thisDay = today.getDate(); // 날짜
+  
   const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
+  const dateIndex = today.getDay(); // 요일
   let thisDate = weekdays[dateIndex]; 
 
   const monthIndex = today.getMonth(); // 월
@@ -85,14 +86,14 @@ function HandleCurrentTime () {
   }); // time
   time.innerText = `${currentTime}`;
 }
-window.addEventListener("load", HandleCurrentTime());
-setInterval(HandleCurrentTime, 1000);
+window.addEventListener("load", currentTimeHandler());
+setInterval(currentTimeHandler, 1000);
 
-// weather
+// geolocation set (API)
 function geoFindMe() {
 
   function onGeoSuccess(position) {
-    const API_KEY = '6e908cf7ecc925726e41331827f8ede6'; // ed17d8f6a50a842c1d4b16c020da9844
+    const API_KEY = 'ed17d8f6a50a842c1d4b16c020da9844'; 
     const { coords : { latitude : lat, longitude : lon } } = position;
     const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
 
@@ -127,23 +128,24 @@ function geoFindMe() {
     weather.innerText = 'Loading...';
     navigator.geolocation.getCurrentPosition(onGeoSuccess, onGeoError);
   }
-
 };
-geoFindMe(); // 위치불러오기 (브라우저 오픈되었을때)
+geoFindMe();
 
-// ✅ 수정필요
+// ✅ geo location 버튼누르면 위치 다시 불러오기 기능 추가
 // const getLocationBtn = document.querySelector('#getLocation button[type="button"]');
-// getLocationBtn.addEventListener('click', geoFindMe); // 버튼눌러서 위치 다시 불러오기
+// getLocationBtn.addEventListener('click', geoFindMe); 
 
+
+// ✅ to do 체크해서 밑줄생긴상태 local storage에 저장하고 불러오는 기능
 //  to do wrapper
 const toDoForm = document.querySelector('#todo-form');
 const toDoInput = toDoForm.querySelector('#todo-form input[type="text"]');
 const toDoList = toDoForm.querySelector('#todo-list');
-const TODOS = "todos";
+const TODOS_KEY = "todos";
 let toDos = [];
 
 function saveToDos () {
-  localStorage.setItem(TODOS, JSON.stringify(toDos)); 
+  localStorage.setItem(TODOS_KEY, JSON.stringify(toDos)); 
 };
 
 function deleteToDoHandler (e) {
@@ -168,8 +170,8 @@ function addToDoHandler (newToDo) {
   // id 및 클래스명 부여
   li.id = newToDo.id; // li에 id값 부여
   li.classList.add('todo-list'); // li 클래스 부여
-  checkbox.id = `${randomId}`;
   label.setAttribute('for', `${randomId}`); // checkbox와 label 연동
+  checkbox.id = `${randomId}`; 
 
   span.innerText = newToDo.text;
   button.innerText = '❌';
@@ -197,7 +199,7 @@ function submitToDoHandler (e) {
 
 toDoForm.addEventListener('submit', submitToDoHandler);
 
-const savedToDos = localStorage.getItem(TODOS);
+const savedToDos = localStorage.getItem(TODOS_KEY);
 console.log(savedToDos);
 
 if (savedToDos !== null) {
@@ -206,7 +208,7 @@ if (savedToDos !== null) {
   parsedToDos.forEach(addToDoHandler);
 }
 
-// d day counter
+// christmas d-day counter
 const clockTitle = document.querySelector("#dday");
 
 function xMasCounter() {
@@ -223,6 +225,7 @@ function xMasCounter() {
   const minutesConvert = String(minutes).padStart(2, "0");
   const secondsConvert = String(seconds).padStart(2, "0");
 
+  // automatic logic for every christmas's counting
   if (today.getMonth() === 11 && today.getDate >= 25) {
     theDay.setFullYear(theDay.getFullYear() + 1);
   }
@@ -232,8 +235,7 @@ function xMasCounter() {
 window.addEventListener("load", xMasCounter());
 setInterval(xMasCounter, 1000);
 
-
-// random quote & image 기능
+// random quote & image 
 const disneyQuotes = [
   {
     quote: 'Because when I look at you, I can feel it. And I look at you and I’m home.',
@@ -277,7 +279,7 @@ const disneyQuotes = [
   }
 ];
 
-// random image (background)
+// random bgimage for 'quote' section
 const randomImage = document.querySelector('.image-wrapper');
 const images = ['christmas0.jpg', 'christmas1.jpg', 'christmas2.jpg', 'christmas3.jpg'];
 const chosenImages = images[Math.floor(Math.random() * images.length)];
@@ -296,27 +298,29 @@ movie.innerText = todaysQuote.movie;
 
 // Theme기능 (dark모드)
 // 토글 스위치의 확인 및 확인 해제
-// 향후 방문을 위해 사용자 기본 설정 저장
 const toggleSwitch = document.querySelector('#checkbox');
-const THEME = 'theme';
+const DATA_THEME = 'data-theme';
+const THEME_KEY = 'theme';
+const DARK = 'dark';
+const LIGHT = 'light';
 
 function switchTheme(e) {
   if (e.target.checked) {
-    document.documentElement.setAttribute('data-theme', 'dark');
-    localStorage.setItem(THEME, 'dark');
+    document.documentElement.setAttribute(DATA_THEME, DARK);
+    localStorage.setItem(THEME_KEY, DARK);
   } else {
-    document.documentElement.setAttribute('data-theme', 'light');
-    localStorage.setItem(THEME, 'light');
+    document.documentElement.setAttribute(DATA_THEME, LIGHT);
+    localStorage.setItem(THEME_KEY, LIGHT);
   }
 };
-toggleSwitch.addEventListener('change', switchTheme, false);
+toggleSwitch.addEventListener('change', switchTheme); // parameter : false ?
 
-// 향후 방문을 위해 사용자 기본 설정 저장
-const currentTheme = localStorage.getItem(THEME);
+// 향후 방문을 위해 사용자 기본 설정 저장 (theme)
+const currentTheme = localStorage.getItem(THEME_KEY);
 if (currentTheme) {
-  document.documentElement.setAttribute('data-theme', currentTheme);
+  document.documentElement.setAttribute(DATA_THEME, currentTheme);
 
-  if (currentTheme === 'dark') {
+  if (currentTheme === DARK) {
     toggleSwitch.checked = true;
   }
 };

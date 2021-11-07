@@ -198,6 +198,7 @@ article:hover {
   grid-gap: 4px;
 }
 .todo-list-wrapper li {
+  padding: 2px 8px;
   min-height: 32px;
   height: fit-content;
   align-items: center;
@@ -207,6 +208,11 @@ article:hover {
   flex-direction: row;
   justify-content: space-between;
   flex-wrap: wrap;
+
+  transition: all 0.4s;
+}
+.todo-list-wrapper li:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 /* checkbox */
 .todo-list-wrapper input[type="checkbox"] {
@@ -245,7 +251,7 @@ article:hover {
   border: 1px solid var(--bg-color);
   background-color: var(--bg-color);
 }
-/* 체크되면 할일목록에 가운데 선 */
+/* 체크시에만 할 일 목록에 가운데 선 */
 .todo-list-wrapper input[type="checkbox"]:checked ~ span {
   text-decoration: line-through;
 }
@@ -255,6 +261,7 @@ article:hover {
   flex: 1;
   padding-left: 16px;
 }
+
 /* delete button */
 .todo-list-wrapper button[type="button"] {
   width: 24px;
