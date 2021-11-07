@@ -281,6 +281,10 @@ article:hover {
 .weekly-weather-wrapper {
   grid-column: 4 / 9;
   grid-row: 2 / 4;
+
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
 }
 .location-wrapper {
   grid-column: 4 / 9;

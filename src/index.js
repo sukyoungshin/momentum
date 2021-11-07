@@ -89,7 +89,7 @@ function currentTimeHandler () {
 window.addEventListener("load", currentTimeHandler());
 setInterval(currentTimeHandler, 1000);
 
-// geolocation set (API)
+// geolocation data-fetch (API)
 function geoFindMe() {
 
   function onGeoSuccess(position) {
@@ -102,14 +102,22 @@ function geoFindMe() {
     .then(data => {
         const city = document.querySelector('#city span:first-child');
         const weather = document.querySelector('#weather p');
+        const weatherIconWrapper = document.querySelector('#weather');
+        const iconImg = document.createElement('img');
       
         const { country } = data.sys; // country
         const { name: cityname } = data; // city name
-        const { main: cityweather } = data.weather[0]; // weather
+        const { description: cityweather } = data.weather[0]; // weather
         const { temp: citytemp } = data.main; // temp
+        const { icon } = data.weather[0]; // weather icon
+        const iconURL = `http://openweathermap.org/img/wn/${icon}.png`;
+
+        weatherIconWrapper.append(iconImg);
+        iconImg.src = iconURL;
+        iconImg.setAttribute('alt', '오늘의 날씨'); // 접근성고려
     
         city.innerText = `${cityname}, ${country} `;
-        weather.innerText = `${citytemp}℃ / ${cityweather}`;
+        weather.innerHTML = `${citytemp}℃ / ${cityweather}`;
       } 
     );
   };
@@ -134,7 +142,6 @@ geoFindMe();
 // ✅ geo location 버튼누르면 위치 다시 불러오기 기능 추가
 // const getLocationBtn = document.querySelector('#getLocation button[type="button"]');
 // getLocationBtn.addEventListener('click', geoFindMe); 
-
 
 // ✅ to do 체크해서 밑줄생긴상태 local storage에 저장하고 불러오는 기능
 //  to do wrapper
@@ -199,14 +206,37 @@ function submitToDoHandler (e) {
 
 toDoForm.addEventListener('submit', submitToDoHandler);
 
+// 향후 방문을 위해 사용자 기본 설정 저장 (todo))
 const savedToDos = localStorage.getItem(TODOS_KEY);
-console.log(savedToDos);
-
 if (savedToDos !== null) {
   const parsedToDos = JSON.parse(savedToDos);
   toDos = parsedToDos;
   parsedToDos.forEach(addToDoHandler);
+};
+
+// news article data-fetch (API)
+// https://evan-moon.github.io/2020/05/21/about-cors/
+function getNews() {
+  const API_KEY = `pub_2108f64a6bce71442e54498547e6103adde2`;
+  const url = `https://newsdata.io/api/1/news?apikey=${API_KEY}&country=kr`; //&language=ko
+  const headers = new Headers({
+    'Content-Type': 'text/xml',
+    'Access-Control-Allow-Origin' : 'https://sukyoungshin.github.io/',
+    'mode' : 'no-cors'
+  });
+
+  fetch(url, headers)
+    .then(response => {response.json()})
+    .then(data => {
+      // const { title, link, description, pubDate } = data.results;
+
+      console.log(data);
+      }
+    );
+
+
 }
+getNews();
 
 // christmas d-day counter
 const clockTitle = document.querySelector("#dday");
@@ -231,7 +261,7 @@ function xMasCounter() {
   }
 
   clockTitle.innerText = `${days}d ${hoursConvert}h ${minutesConvert}m ${secondsConvert}s`;
-}
+};
 window.addEventListener("load", xMasCounter());
 setInterval(xMasCounter, 1000);
 
