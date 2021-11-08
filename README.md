@@ -11,6 +11,8 @@
 <br /><br />
 
 ## 스스로 추가한 조건
+- CSS : Grid레이아웃, glass morphism 적용
+- 날씨 API 불러오기 전 loading 텍스트알림 추가
+- 사용자의 위치에 따른 주간날씨 불러오기 (api사용)
 - 다크모드 기능 (localStorage 사용)
-- API 불러오기 전 loading 텍스트알림 추가
-- 주간날씨 데이터 바인딩 (api사용)
+- 뮤직 플레이어
