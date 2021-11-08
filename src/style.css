@@ -150,6 +150,7 @@ article:hover {
 .todo-wrapper h2 {
   margin: 0 0 16px 0;
   height: 32px;
+  text-transform: capitalize;
 }
 .todo-wrapper form {
   width: 100%;
@@ -276,6 +277,7 @@ article:hover {
 }
 .dummy-data-wrapper h2 {
   margin: 0 0 16px 0;
+  text-transform: capitalize;
 }
 .dummy-data-wrapper ul {
   list-style: none;
@@ -344,6 +346,7 @@ article:hover {
 
 .weekly-weather div {
   width: 100%;
+  padding: 2px 8px;
   display: inline-flex;
   flex-direction: row;
   align-items: center;
