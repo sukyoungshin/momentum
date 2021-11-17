@@ -319,6 +319,8 @@ article:hover {
   align-items: flex-start;
 }
 .weekly-weather-wrapper h2 {
+  margin: 0 16px 0 0;
+  width: min-content;
   text-transform: capitalize;
 }
 .weekly-weather {
