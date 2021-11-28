@@ -14,3 +14,6 @@
 - CSS : Grid레이아웃, glass morphism 적용
 - 다크모드 기능 (localStorage 사용)
 - 뮤직 플레이어
+
+## 프로젝트 회고
+[프로젝트 진행하며 겪은 이슈정리](https://github.com/sukyoungshin/TIL/blob/main/Note/momentum.md)
