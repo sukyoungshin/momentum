@@ -17,4 +17,4 @@
 <br /><br />
 
 ## 프로젝트 회고
-[프로젝트 진행하며 겪은 이슈정리](https://github.com/sukyoungshin/TIL/blob/main/Note/momentum.md)
+프로젝트 진행하며 겪은 이슈정리 (추가예정)
