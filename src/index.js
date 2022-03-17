@@ -1,15 +1,145 @@
-// login popup
-const modal = document.querySelector('#poppup');
-const loginForm = modal.querySelector('#loginform');
-const loginInput = loginForm.querySelector('#loginform input[type="text"]');
-const loginButton = loginForm.querySelector('#loginform button[type="submit"]');
-const greeting = document.querySelector('#greeting');
+window.addEventListener('load', init);
 
-const HIDDEN_KEY = 'hidden'; 
-const ACTIVE_KEY= 'active';
-const USERNAME_KEY = 'username';
+function getElements() {
+  /* LOGIN POPUP */
+  const modal = document.querySelector('#poppup');
+  const loginForm = modal.querySelector('#loginform');
+  const loginInput = loginForm.querySelector('#loginform input[type="text"]');
+  const loginButton = loginForm.querySelector('#loginform button[type="submit"]');
+  const greeting = document.querySelector('#greeting');
+
+  /* TIME */
+  const date = document.querySelector('#date p');
+  const time = document.querySelector('#time p');
+
+  /* TO-DO */
+  const toDoForm = document.querySelector('#todo-form');
+  const toDoInput = toDoForm.querySelector('#todo-form input[type="text"]');
+  const toDoList = toDoForm.querySelector('#todo-list');
+
+  /* D-DAY COUNTER */
+  const clockTitle = document.querySelector("#dday");
+
+  /* RANDOM-QUOTE */
+  const randomImage = document.querySelector('.image-wrapper');
+  const quote = document.querySelector('#random-image span:first-child');
+  const movie = document.querySelector('#random-image span:last-child');
+
+  /* DARK-MODE */
+  const toggleSwitch = document.querySelector('#checkbox');
+
+  /* FOOTER */
+  const thisyear = document.querySelector('.thisyear');
+
+  return {
+    modal, 
+    loginForm, 
+    loginInput, 
+    loginButton, 
+    greeting, 
+    date, 
+    time,
+    toDoForm,
+    toDoInput,
+    toDoList,
+    clockTitle,
+    randomImage,
+    quote,
+    movie,
+    toggleSwitch,
+    thisyear
+  };
+};
+
+function CONSTANTS() {
+  /* LOGIN POPUP */
+  const HIDDEN_KEY = 'hidden';
+  const ACTIVE_KEY = 'active';
+  const USERNAME_KEY = 'username';
+
+  /* TO-DO */
+  const TODOS_KEY = "todos";
+
+  /* DARK MODE */
+  const DATA_THEME = 'data-theme';
+  const THEME_KEY = 'theme';
+  const DARK = 'dark';
+  const LIGHT = 'light';
+
+  return {
+    HIDDEN_KEY, 
+    ACTIVE_KEY, 
+    USERNAME_KEY, 
+    TODOS_KEY,
+    DATA_THEME,
+    THEME_KEY,
+    DARK,
+    LIGHT
+  };
+};
+
+function init() {
+  const  {
+    modal, 
+    loginForm, 
+    loginInput, 
+    loginButton, 
+    greeting, 
+    date, 
+    time,
+    toDoForm,
+    toDoInput,
+    toDoList,
+    clockTitle,
+    randomImage,
+    quote,
+    movie,
+    toggleSwitch,
+    thisyear
+  } = getElements();
+  
+  /* LocalStorage 정보 불러오기 */
+  getUserNameInLocalStorage()
+  getToDosInLocalStorage();
+  getCurrentThemeInLocalStorage();
+
+  /* Set Interval */
+  window.addEventListener("load", setChristMasCounter());
+  window.addEventListener("load", currentTimeHandler());
+  setInterval(setChristMasCounter, 1000);
+  setInterval(currentTimeHandler, 1000*60);
+
+  randomBgColor();
+  btnColorChange();
+  getFakeData();
+  getRandomBackgroundInQuote();
+  getRandomQuotes();
+  geoFindMe();
+
+  toDoForm.addEventListener('submit', submitToDoHandler);
+  toggleSwitch.addEventListener('change', switchTheme); // parameter : false ?
+  thisyear.innerText = new Date().getFullYear();
+};
+
+function getUserNameInLocalStorage() {
+  const {modal, loginForm, loginInput} = getElements();
+  const {HIDDEN_KEY, USERNAME_KEY} = CONSTANTS();
+  const savedUserName = localStorage.getItem(USERNAME_KEY); 
+
+  if (savedUserName === null) {
+    modal.classList.remove(HIDDEN_KEY);
+    loginInput.addEventListener('input', btnColorChange); 
+    loginForm.addEventListener('submit', loginSubmitHandler); 
+  } else {
+    modal.classList.add(HIDDEN_KEY);
+    paintGreetings(savedUserName);
+  };
+};
 
 function btnColorChange () {
+  const {loginInput, loginButton} = getElements();
+  const {ACTIVE_KEY} = CONSTANTS();
+
   if (loginInput.value.length >= 1) {
     loginButton.classList.add(ACTIVE_KEY);
   } else {
@@ -18,79 +148,117 @@ function btnColorChange () {
 };
 
 function paintGreetings(username) {
-  const randomEmojis = ['😍','😎','😝','🎅','🖖','👋','🎄','✨','🍀', '🦄'];
-  const emojiIndex = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
-  greeting.innerText = `${username} ${emojiIndex}`;
+  const randomEmojis = [
+    '😍',
+    '😎',
+    '😝',
+    '🎅',
+    '🖖',
+    '👋',
+    '🎄',
+    '✨',
+    '🍀', 
+    '🦄'
+  ];
+  const randomIndex = Math.floor(Math.random() * randomEmojis.length);
+  const randomEmoji = randomEmojis[randomIndex];
+  greeting.innerText = `${username} ${randomEmoji}`;
 };
 
 function loginSubmitHandler(e) {
   e.preventDefault();
+  const {modal, loginInput} = getElements();
+  const {HIDDEN_KEY, USERNAME_KEY} = CONSTANTS();
+
   modal.classList.add(HIDDEN_KEY);
   const username = loginInput.value;
   localStorage.setItem(USERNAME_KEY, username); // localStorage에 유저이름 저장
   paintGreetings(username); // 입력받은 username 화면에 나타냄
 };  
 
-// 향후 방문을 위해 사용자 기본 설정 저장 (username)
-const savedUserName = localStorage.getItem(USERNAME_KEY); 
-if (savedUserName === null) {
-  // if username didn't visit before, show the login modal
-  modal.classList.remove(HIDDEN_KEY);
-  loginInput.addEventListener('input', btnColorChange); 
-  loginForm.addEventListener('submit', loginSubmitHandler); 
-} else {
-  // if username visited once, show users the greeting message
-  modal.classList.add(HIDDEN_KEY);
-  paintGreetings(savedUserName);
-};
-
-// random background color
 function randomBgColor () {
-  const colors = ["#ef5777","#9198e5", "#575fcf","#4bcffa","#0be881","#f53b57","#3c40c6","#00d8d6","#05c46b","#e66465","#d2dae2","#485460","#ffa801","#ffd32a"];
-  const a = colors[Math.floor(Math.random() * colors.length)];
-  const b = colors[Math.floor(Math.random() * colors.length)];
+  const colors = [
+    "#ef5777",
+    "#9198e5", 
+    "#575fcf",
+    "#4bcffa",
+    "#0be881",
+    "#f53b57",
+    "#3c40c6",
+    "#00d8d6",
+    "#05c46b",
+    "#e66465",
+    "#d2dae2",
+    "#485460",
+    "#ffa801",
+    "#ffd32a"
+  ];
+  const randomIndex = Math.floor(Math.random() * colors.length);
+  const a = colors[randomIndex];
+  const b = colors[randomIndex];
 
   if (a !== b) {
-    // if the selected colors are different
-    document.body.style.background = `linear-gradient(45deg, ${a}, ${b})`;
-  } else {
-    // if the selected colors are same, show the following (default)
-    document.body.style.background = `linear-gradient(45deg, #e66465, #9198e5)`;
-  }
+    return document.body.style.background = `linear-gradient(45deg, ${a}, ${b})`;
+  } 
+  return document.body.style.background = `linear-gradient(45deg, #e66465, #9198e5)`;
 };
-window.addEventListener("load", randomBgColor());
 
 // current time
 function currentTimeHandler () {
-  const date = document.querySelector('#date p');
-  const time = document.querySelector('#time p');
+  const {date, time} = getElements(); 
+  const {thisYear, thisMonth, thisDate, thisDay} = getTodayInformation();
+  const currentTime = getCurrentTime();
 
+  date.innerText = `${thisMonth} ${thisDay}, ${thisYear} ( ${thisDate} )`;
+  time.innerText = `${currentTime}`;
+}
+
+function getTodayInformation() {
   const today = new Date();
   const thisYear = today.getFullYear(); // 연도
-  const thisDay = today.getDate(); // 날짜
-  
-  const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
-  const dateIndex = today.getDay(); // 요일
-  let thisDate = weekdays[dateIndex]; 
 
-  const monthIndex = today.getMonth(); // 월
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  let thisMonth = months[monthIndex]; // 현재 월
-  
-  date.innerText = `${thisMonth} ${thisDay}, ${thisYear} ( ${thisDate} )`;
-  
+  const monthIndex = today.getMonth(); 
+  const thisMonth = months[monthIndex]; // 월
+
+  const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'];
+  const dayIndex = today.getDay();
+  const thisDate = weekdays[dayIndex]; // 요일
+
+  const thisDay = today.getDate(); // 날짜
+
+  return {thisYear, thisMonth, thisDate, thisDay};
+};
+
+function getCurrentTime() {
+  const today = new Date();
   const currentTime = today.toLocaleTimeString('en-US', { 
     hour12: true, 
     hour: "numeric", 
     minute: "numeric"
-  }); // time
-  time.innerText = `${currentTime}`;
-}
-window.addEventListener("load", currentTimeHandler());
-setInterval(currentTimeHandler, 1000);
+  }); 
+  return currentTime;
+};
 
-// geolocation data-fetch (API)
+// Weather API
 function geoFindMe() {
+
+  function getCurrentGeolocation() {
+    if(!navigator.geolocation) {
+      alert('Geolocation is not supported by your browser');
+    } else {
+      const city = document.querySelector('#city span:first-child');
+      const weather = document.querySelector('#weather span');
+  
+      city.innerText = 'Loading...';
+      weather.innerText = 'Loading...';
+      navigator.geolocation.getCurrentPosition(
+        getSuccessGeolocation, 
+        getFailedGeolocation
+      );
+    }
+  };
+  getCurrentGeolocation();
 
   function getCurrentWeather(url) {
     fetch(url)
@@ -156,7 +324,7 @@ function geoFindMe() {
     })
   }
 
-  function handleGeoSuccess(position) {
+  function getSuccessGeolocation(position) {
     const API_KEY = 'ed17d8f6a50a842c1d4b16c020da9844'; 
     const { coords : { latitude : lat, longitude : lon } } = position;
     const urlCurrentWeather = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
@@ -166,55 +334,34 @@ function geoFindMe() {
     getForecaseWeather(urlForecastWeather); // 7days forecast weather
   };
 
-  function handleGeoFail() {
-    alert('위치를 확인할 수 없습니다.');
+  function getFailedGeolocation() {
+    alert('위치 정보를 확인할 수 없습니다.');
   };
 
-  if(!navigator.geolocation) {
-    alert('Geolocation is not supported by your browser');
-  } else {
-    const city = document.querySelector('#city span:first-child');
-    const weather = document.querySelector('#weather span');
-
-    city.innerText = 'Loading...';
-    weather.innerText = 'Loading...';
-    navigator.geolocation.getCurrentPosition(handleGeoSuccess, handleGeoFail);
-  }
 };
-geoFindMe();
 
-
-
-// ✅ geo location 버튼누르면 위치 다시 불러오기 기능 추가
-// const getLocationBtn = document.querySelector('#getLocation button[type="button"]');
-// getLocationBtn.addEventListener('click', geoFindMe); 
-
-// ✅ to do 체크해서 밑줄생긴상태 local storage에 저장하고 불러오는 기능
-//  to do wrapper
-const toDoForm = document.querySelector('#todo-form');
-const toDoInput = toDoForm.querySelector('#todo-form input[type="text"]');
-const toDoList = toDoForm.querySelector('#todo-list');
-const TODOS_KEY = "todos";
+//  TO DO
 let toDos = [];
-
 function saveToDos () {
+  const {TODOS_KEY} = CONSTANTS();
   localStorage.setItem(TODOS_KEY, JSON.stringify(toDos)); 
 };
 
 function deleteToDoHandler (e) {
   const li = e.target.parentElement;
   li.remove();    
-  toDos = toDos.filter((toDo) => toDo.id !== parseInt(li.id));
+  toDos = toDos.filter((toDo) => toDo.id !== parseInt(li.id, 10));
   saveToDos();
 };
 
 function addToDoHandler (newToDo) {
+  const {toDoList} = getElements();
   const li = document.createElement('li');
   const checkbox = document.createElement('input');
   const label = document.createElement('label');
   const span = document.createElement('span');
   const button = document.createElement('button');
-  const randomId = Math.floor(Math.random() * 1000); // 매번 새로운 id명 생성하여 부여
+  const randomId = Math.floor(Math.random() * 1000);
 
   // 속성값 부여
   checkbox.setAttribute('type', 'checkbox');
@@ -224,7 +371,7 @@ function addToDoHandler (newToDo) {
   li.id = newToDo.id; // li에 id값 부여
   li.classList.add('todo-list'); // li 클래스 부여
   label.setAttribute('for', `${randomId}`); // checkbox와 label 연동
-  checkbox.id = `${randomId}`; 
+  checkbox.id = randomId;
 
   span.innerText = newToDo.text;
   button.innerText = '❌';
@@ -240,39 +387,31 @@ function addToDoHandler (newToDo) {
 
 function submitToDoHandler (e) {
   e.preventDefault();
-  const newToDoObj = {
+  const {toDoInput} = getElements();
+  const newToDo = {
     id : Date.now(),
-    text : toDoInput.value
+    text : toDoInput.value,
   }
-  toDos.push(newToDoObj);
-  addToDoHandler(newToDoObj);
+  toDos.push(newToDo);
+  addToDoHandler(newToDo);
   saveToDos();
   toDoInput.value = '';
 };
 
-toDoForm.addEventListener('submit', submitToDoHandler);
+function getToDosInLocalStorage() {
+  const {TODOS_KEY} = CONSTANTS();
+  const savedToDos = localStorage.getItem(TODOS_KEY);
 
-// 향후 방문을 위해 사용자 기본 설정 저장 (todo))
-const savedToDos = localStorage.getItem(TODOS_KEY);
-if (savedToDos !== null) {
-  const parsedToDos = JSON.parse(savedToDos);
-  toDos = parsedToDos;
-  parsedToDos.forEach(addToDoHandler);
+  if (savedToDos !== null) {
+    const parsedToDos = JSON.parse(savedToDos);
+    toDos = parsedToDos;
+    parsedToDos.forEach(addToDoHandler);
+  };
 };
 
-// ✅ dummy text data-fetch (API)  ==> news Data 받아오고 싶은데
-// cors 이슈란 https://evan-moon.github.io/2020/05/21/about-cors/
-// cors를 해결하기 위한 방법
-// - 서버에서 처리를 하는 방법이 제일 편하다
-// - 클라이언트 단에서 프록시를 이용해 해결할 수는 있다.
-// - cra면 패키지 제이슨 파일에 프록시 주소 쓰고 api요청하면 그 주소로 요청을 한다.
-// 바닐라JS인데 가능할까요? 데브서버를 띄우면 가능하긴한데 그 상황이면 엔진엑스 두고 그거 통해서 리버스 프록시 쓰는게 더 편할꺼같긴 하네요
-
-// proxy 설정하기 (proxy뜻 : 대리인, 경유서버같은거에요 요청 고대로 전달해주는거)
-// - 밸로퍼트 : https://react.vlpt.us/redux-middleware/09-cors-and-proxy.html
-// - https://gist.github.com/jesperorb/6ca596217c8dfba237744966c2b5ab1e
+// API
 function getFakeData() {
-  const posts = 'posts'; // query
+  const posts = 'posts'; // queryParameter
   const url = `https://jsonplaceholder.typicode.com/${posts}`;
 
   fetch(url)
@@ -289,12 +428,9 @@ function getFakeData() {
 
   })
 };
-getFakeData();
 
 // christmas d-day counter
-const clockTitle = document.querySelector("#dday");
-
-function xMasCounter() {
+function getChristMasInformation() {
   const today = new Date();
   const theDay = new Date(today.getFullYear(), 11, 25);
   const milliSecondsGap = theDay.getTime() - today.getTime();
@@ -308,15 +444,21 @@ function xMasCounter() {
   const minutesConvert = String(minutes).padStart(2, "0");
   const secondsConvert = String(seconds).padStart(2, "0");
 
+  const todayDecember = today.getMonth(); // 11이면 12월
+  const todayDate = today.getDate();
+  return {theDay, todayDecember, todayDate, days, hoursConvert, minutesConvert, secondsConvert};
+};
+
+function setChristMasCounter() {
+  const {clockTitle} = getElements();
+  const {theDay, todayDecember, todayDate, days, hoursConvert, minutesConvert, secondsConvert} = getChristMasInformation();
+
   // automatic logic for every christmas's counting
-  if (today.getMonth() === 11 && today.getDate >= 25) {
+  if (todayDecember === 11 && todayDate >= 25) {
     theDay.setFullYear(theDay.getFullYear() + 1);
   }
-
   clockTitle.innerText = `${days}d ${hoursConvert}h ${minutesConvert}m ${secondsConvert}s`;
 };
-window.addEventListener("load", xMasCounter());
-setInterval(xMasCounter, 1000);
 
 // random quote & image 
 const disneyQuotes = [
@@ -362,36 +504,29 @@ const disneyQuotes = [
   }
 ];
 
-// random bgimage for 'quote' section
-const randomImage = document.querySelector('.image-wrapper');
-const images = ['christmas0.jpg', 'christmas1.jpg', 'christmas2.jpg', 'christmas3.jpg'];
-const chosenImages = images[Math.floor(Math.random() * images.length)];
-randomImage.style = `background-image: url(./src/${chosenImages})`;
+function getRandomBackgroundInQuote() {
+  const {randomImage} = getElements();
+  const images = ['christmas0.jpg', 'christmas1.jpg', 'christmas2.jpg', 'christmas3.jpg'];
+  const randomIndex = Math.floor(Math.random() * images.length);
+  const chosenImages = images[randomIndex];
+  randomImage.style = `background-image: url(./src/${chosenImages})`;
+};
 
-// random quote
-const quote = document.querySelector('#random-image span:first-child');
-const movie = document.querySelector('#random-image span:last-child');
-
-const INDEX = Math.floor(Math.random() * disneyQuotes.length); // 0 ~ 명언갯수만큼
-const todaysQuote = disneyQuotes[INDEX];
-
-quote.innerText = todaysQuote.quote;
-movie.innerText = todaysQuote.movie;
-
-// ✅ music player
-
-
+function getRandomQuotes() {
+  const {quote, movie} = getElements();
+  const quoteIndex = Math.floor(Math.random() * disneyQuotes.length);
+  const todaysQuote = disneyQuotes[quoteIndex];
+  
+  quote.innerText = todaysQuote.quote;
+  movie.innerText = todaysQuote.movie;
+};
 
 // Theme기능 (dark모드)
-// 토글 스위치의 확인 및 확인 해제
-const toggleSwitch = document.querySelector('#checkbox');
-const DATA_THEME = 'data-theme';
-const THEME_KEY = 'theme';
-const DARK = 'dark';
-const LIGHT = 'light';
-
 function switchTheme(e) {
-  if (e.target.checked) {
+  const {DATA_THEME, THEME_KEY, DARK, LIGHT} = CONSTANTS();
+  const DARK_MODE = e.target.checked;
+
+  if (DARK_MODE) {
     document.documentElement.setAttribute(DATA_THEME, DARK);
     localStorage.setItem(THEME_KEY, DARK);
   } else {
@@ -399,18 +534,17 @@ function switchTheme(e) {
     localStorage.setItem(THEME_KEY, LIGHT);
   }
 };
-toggleSwitch.addEventListener('change', switchTheme); // parameter : false ?
 
-// 향후 방문을 위해 사용자 기본 설정 저장 (theme)
-const currentTheme = localStorage.getItem(THEME_KEY);
-if (currentTheme) {
-  document.documentElement.setAttribute(DATA_THEME, currentTheme);
+function getCurrentThemeInLocalStorage() {
+  const {toggleSwitch} = getElements();
+  const {DATA_THEME, THEME_KEY, DARK} = CONSTANTS();
+  const currentTheme = localStorage.getItem(THEME_KEY);
 
+  if (currentTheme) {
+    document.documentElement.setAttribute(DATA_THEME, currentTheme);  
+  }
   if (currentTheme === DARK) {
     toggleSwitch.checked = true;
   }
-};
 
-// footer
-const thisyear = document.querySelector('.thisyear');
-thisyear.innerText = new Date().getFullYear();
+};
