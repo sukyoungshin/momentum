@@ -145,7 +145,7 @@ function getConstants(item) {
 
   if (item === CONSTANTS.DARK_MODE) {
     return {
-      THEME_KEY: "theme-key",
+      THEME_KEY: "data-theme",
       THEME: "theme",
       DARK: "dark",
       LIGHT: "light",
