@@ -1,4 +1,11 @@
-import { getRandomIndex } from "./utils.js";
+import {
+  getHTMLElements,
+  createGeoHTMLElements,
+  createWeatherHTMLElements,
+  createTodoHTMLElements,
+  getConstants,
+  getRandomIndex,
+} from "./utils.js";
 import {
   CONSTANTS,
   BASE_URL,
@@ -17,7 +24,7 @@ function init() {
   /* LocalStorage 정보 불러오기 */
   getLocalStorageUserName();
   getLocalStorageToDos();
-  getLocalStorageCurrentTheme();
+  getLocalStorageBrowserTheme();
 
   /* Set Interval */
   window.addEventListener("load", setChristMasCounter());
@@ -35,126 +42,6 @@ function init() {
 
   $toDoForm.addEventListener("submit", submitToDo);
   $toggleSwitch.addEventListener("change", switchBrowserTheme);
-}
-
-/** DOM Elements 선택 */
-function getHTMLElements() {
-  /* LOGIN POPUP */
-  const $modal = document.querySelector("#poppup");
-  const $loginForm = $modal.querySelector("#loginform");
-  const $loginInput = $loginForm.querySelector('#loginform input[type="text"]');
-  const $loginButton = $loginForm.querySelector(
-    '#loginform button[type="submit"]'
-  );
-  const $greeting = document.querySelector("#greeting");
-
-  /* TIME */
-  const $date = document.querySelector("#date p");
-  const $time = document.querySelector("#time p");
-
-  /* TO-DO */
-  const $toDoForm = document.querySelector("#todo-form");
-  const $toDoInput = $toDoForm.querySelector('#todo-form input[type="text"]');
-  const $toDoList = $toDoForm.querySelector("#todo-list");
-
-  /* D-DAY COUNTER */
-  const $clockTitle = document.querySelector("#dday");
-
-  /* RANDOM-QUOTE */
-  const $randomImage = document.querySelector(".image-wrapper");
-  const $quote = document.querySelector("#random-image span:first-child");
-  const $movie = document.querySelector("#random-image span:last-child");
-
-  /* DARK-MODE */
-  const $toggleSwitch = document.querySelector("#checkbox");
-
-  /* FOOTER */
-  const $thisYear = document.querySelector(".thisyear");
-
-  return {
-    $modal,
-    $loginForm,
-    $loginInput,
-    $loginButton,
-    $greeting,
-    $date,
-    $time,
-    $toDoForm,
-    $toDoInput,
-    $toDoList,
-    $clockTitle,
-    $randomImage,
-    $quote,
-    $movie,
-    $toggleSwitch,
-    $thisYear,
-  };
-}
-
-/** DOM Element 생성 */
-function createGeoHTMLElements() {
-  return {
-    $city: document.querySelector("#city span:first-child"),
-    $todayWeather: document.querySelector("#weather span"),
-    $weatherIconWrapper: document.querySelector("#weather"),
-    $iconImg: document.createElement("img"),
-  };
-}
-function createWeatherHTMLElements() {
-  return {
-    $weeklyWeatherWrapper: document.querySelector("#weekly-weather"),
-    $div: document.createElement("div"),
-    $span1: document.createElement("span"),
-    $span2: document.createElement("span"),
-    $iconImg: document.createElement("img"),
-  };
-}
-function createTodoHTMLElements() {
-  const $li = document.createElement("li");
-  $li.classList.add("todo-list"); // li 클래스 부여
-
-  const $checkbox = document.createElement("input");
-  $checkbox.setAttribute("type", "checkbox");
-
-  const $button = document.createElement("button");
-  $button.setAttribute("type", "button");
-  $button.innerText = "❌";
-
-  return {
-    $li,
-    $checkbox,
-    $label: document.createElement("label"),
-    $span: document.createElement("span"),
-    $button,
-  };
-}
-
-/** 필요한 상수 반환 */
-function getConstants(item) {
-  if (item === CONSTANTS.LOGIN_POPUP) {
-    return {
-      HIDDEN: "hidden",
-      ACTIVE: "active",
-      USERNAME: "username",
-    };
-  }
-
-  if (item === CONSTANTS.TODO) {
-    return {
-      TODOS: "todos",
-    };
-  }
-
-  if (item === CONSTANTS.DARK_MODE) {
-    return {
-      THEME_KEY: "data-theme",
-      THEME: "theme",
-      DARK: "dark",
-      LIGHT: "light",
-    };
-  }
-
-  return null;
 }
 
 /** 현재연도 업데이트 (footer) */
@@ -513,7 +400,7 @@ function switchBrowserTheme(e) {
   }
 }
 
-function getLocalStorageCurrentTheme() {
+function getLocalStorageBrowserTheme() {
   const { $toggleSwitch } = getHTMLElements();
   const { THEME_KEY, THEME, DARK } = getConstants(CONSTANTS.DARK_MODE);
   const currentTheme = localStorage.getItem(THEME);
