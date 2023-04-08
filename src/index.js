@@ -1,38 +1,40 @@
+import { getRandomIndex } from "./utils.js";
 import {
   CONSTANTS,
+  BASE_URL,
   colors,
   disneyQuotes,
   images,
   months,
   weekdays,
   randomEmojis,
-} from "./utils.js";
+} from "./data.js";
 
 window.addEventListener("load", init);
 function init() {
-  const { $toDoForm, $toggleSwitch, $thisYear } = getHTMLElements();
+  const { $toDoForm, $toggleSwitch } = getHTMLElements();
 
   /* LocalStorage 정보 불러오기 */
-  getUserNameInLocalStorage();
-  getToDosInLocalStorage();
-  getCurrentThemeInLocalStorage();
+  getLocalStorageUserName();
+  getLocalStorageToDos();
+  getLocalStorageCurrentTheme();
 
   /* Set Interval */
   window.addEventListener("load", setChristMasCounter());
-  window.addEventListener("load", setTodayAndTime());
+  window.addEventListener("load", setTodayInformationAndTime());
   setInterval(setChristMasCounter, 1000);
-  setInterval(setTodayAndTime, 1000 * 60);
+  setInterval(setTodayInformationAndTime, 1000 * 60);
 
-  randomBgColor();
   changePopUpButtonColor();
-  getFakeData();
-  getRandomBackgroundInQuote();
-  getRandomQuotes();
-  geoFindMe();
+  changeBodyBackgroundColor();
+  fetchFakePosts();
+  changeQuoteBackgroundImage();
+  fetchRandomQuotes();
+  fetchGeolocationAndWeather();
+  updateThisYear();
 
   $toDoForm.addEventListener("submit", submitToDo);
-  $toggleSwitch.addEventListener("change", switchTheme);
-  $thisYear.innerText = new Date().getFullYear();
+  $toggleSwitch.addEventListener("change", switchBrowserTheme);
 }
 
 /** DOM Elements 선택 */
@@ -93,7 +95,7 @@ function getHTMLElements() {
 function createGeoHTMLElements() {
   return {
     $city: document.querySelector("#city span:first-child"),
-    $todayweather: document.querySelector("#weather span"),
+    $todayWeather: document.querySelector("#weather span"),
     $weatherIconWrapper: document.querySelector("#weather"),
     $iconImg: document.createElement("img"),
   };
@@ -155,8 +157,14 @@ function getConstants(item) {
   return null;
 }
 
-/** 유저정보 반환 */
-function getUserNameInLocalStorage() {
+/** 현재연도 업데이트 (footer) */
+function updateThisYear() {
+  const { $thisYear } = getHTMLElements();
+  $thisYear.innerText = new Date().getFullYear();
+}
+
+/** LocalStorage에서 유저정보 반환 */
+function getLocalStorageUserName() {
   const { $modal, $loginForm, $loginInput } = getHTMLElements();
   const { HIDDEN, USERNAME } = getConstants(CONSTANTS.LOGIN_POPUP);
   const savedUserName = localStorage.getItem(USERNAME);
@@ -187,8 +195,8 @@ function changePopUpButtonColor() {
 function setUserNameOnProfile(username) {
   const { $greeting } = getHTMLElements();
 
-  const randomIndex = Math.floor(Math.random() * randomEmojis.length);
-  const randomEmoji = randomEmojis[randomIndex];
+  const index = getRandomIndex(randomEmojis);
+  const randomEmoji = randomEmojis[index];
   $greeting.innerText = `${username} ${randomEmoji}`;
 }
 
@@ -205,19 +213,19 @@ function submitUserNameInPopUp(e) {
 }
 
 /** BODY 영역에 배경색상 지정 */
-function randomBgColor() {
-  const randomIndex = Math.floor(Math.random() * colors.length);
-  const a = colors[randomIndex];
-  const b = colors[randomIndex];
+function changeBodyBackgroundColor() {
+  const index = getRandomIndex(colors);
+  const left = colors[index];
+  const right = colors[index];
 
-  if (a !== b) {
-    return (document.body.style.background = `linear-gradient(45deg, ${a}, ${b})`);
+  if (left !== right) {
+    return (document.body.style.background = `linear-gradient(45deg, ${left}, ${right})`);
   }
   return (document.body.style.background = `linear-gradient(45deg, #e66465, #9198e5)`);
 }
 
 /** 현재 시간과 날짜를 셋팅 */
-function setTodayAndTime() {
+function setTodayInformationAndTime() {
   const { $date, $time } = getHTMLElements();
   const { year, month, date, day } = getCurrentDate();
   const time = getCurrentTime();
@@ -252,8 +260,8 @@ function getCurrentTime() {
   return time;
 }
 
-/** Weather API */
-function geoFindMe() {
+/** Weather 및 위치정보 호출 */
+function fetchGeolocationAndWeather() {
   function getCurrentGeolocation() {
     if (!navigator.geolocation) {
       alert("Geolocation is not supported by your browser");
@@ -264,25 +272,25 @@ function geoFindMe() {
       $city.innerText = "Loading...";
       $weather.innerText = "Loading...";
       navigator.geolocation.getCurrentPosition(
-        getSuccessGeolocation,
-        getFailedGeolocation
+        successGeolocation,
+        failedGeolocation
       );
     }
   }
   getCurrentGeolocation();
 
-  function getCurrentWeather(url) {
+  function fetchTodayWeather(url) {
     fetch(url)
       .then((response) => response.json())
       .then((data) => {
-        const { $city, $todayweather, $weatherIconWrapper, $iconImg } =
+        const { $city, $todayWeather, $weatherIconWrapper, $iconImg } =
           createGeoHTMLElements();
 
         // data fetch
-        const { country } = data.sys; // country
-        const { name: cityname } = data; // city name
-        const { description: cityweather } = data.weather[0]; // weather
-        const { temp: citytemp } = data.main; // temp
+        const { country } = data.sys;
+        const { name: cityName } = data;
+        const { description: cityWeather } = data.weather[0];
+        const { temp: cityTemperature } = data.main;
         const { icon } = data.weather[0]; // weather icon
         const iconURL = `http://openweathermap.org/img/wn/${icon}.png`;
         $weatherIconWrapper.append($iconImg);
@@ -290,12 +298,12 @@ function geoFindMe() {
         $iconImg.setAttribute("alt", "오늘의 날씨");
 
         // data binding
-        $city.innerText = `${cityname}, ${country}`; // 도시이름 출력
-        $todayweather.innerHTML = `${citytemp}℃ / ${cityweather}`; // 오늘날씨 출력
+        $city.innerText = `${cityName}, ${country}`;
+        $todayWeather.innerHTML = `${cityTemperature}℃ / ${cityWeather}`;
       });
   }
 
-  function getForecastWeather(url) {
+  function fetch7DaysWeather(url) {
     fetch(url)
       .then((response) => response.json())
       .then((data) => {
@@ -303,8 +311,8 @@ function geoFindMe() {
 
         for (let i = 1; i < daily.length; i++) {
           const { $weeklyWeatherWrapper, $div, $span1, $span2, $iconImg } =
-            createWeatherHTMLElements(); // HTML elements 생성
-          const { main: weeklyWeather, icon } = daily[i].weather[0]; // weeklyWeather: 날씨 , icon: 아이콘
+            createWeatherHTMLElements();
+          const { main: weeklyWeather, icon } = daily[i].weather[0];
           const iconURL = `http://openweathermap.org/img/wn/${icon}.png`;
 
           $iconImg.src = iconURL;
@@ -328,7 +336,7 @@ function geoFindMe() {
       });
   }
 
-  function getSuccessGeolocation(position) {
+  function successGeolocation(position) {
     const API_KEY = "ed17d8f6a50a842c1d4b16c020da9844";
     const {
       coords: { latitude: lat, longitude: lon },
@@ -336,11 +344,11 @@ function geoFindMe() {
     const urlCurrentWeather = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
     const urlForecastWeather = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=hourly,minutely&appid=${API_KEY}`;
 
-    getCurrentWeather(urlCurrentWeather); // current weather
-    getForecastWeather(urlForecastWeather); // 7days forecast weather
+    fetchTodayWeather(urlCurrentWeather); // current weather
+    fetch7DaysWeather(urlForecastWeather); // 7days forecast weather
   }
 
-  function getFailedGeolocation() {
+  function failedGeolocation() {
     alert("위치 정보를 확인할 수 없습니다.");
   }
 }
@@ -372,7 +380,6 @@ function addToDo(newToDo) {
   $span.innerText = newToDo.text;
   $button.addEventListener("click", deleteToDo);
 
-  // li 태그 안에 DOM 요소들 넣고
   $li.append($checkbox);
   $li.append($label);
   $li.append($span);
@@ -397,7 +404,7 @@ function submitToDo(e) {
   resetToDoInput($toDoInput);
 }
 
-function getToDosInLocalStorage() {
+function getLocalStorageToDos() {
   const { TODOS } = getConstants(CONSTANTS.TODO);
   const savedToDos = localStorage.getItem(TODOS);
 
@@ -409,7 +416,7 @@ function getToDosInLocalStorage() {
 }
 
 /** API 호출 (fake posts) */
-function getFakeData() {
+function fetchFakePosts() {
   const posts = "posts"; // queryParameter
   const url = `https://jsonplaceholder.typicode.com/${posts}`;
 
@@ -475,25 +482,25 @@ function setChristMasCounter() {
 }
 
 /** Random Quote */
-function getRandomBackgroundInQuote() {
-  const { $randomImage } = getHTMLElements();
+function fetchRandomQuotes() {
+  const { $quote, $movie } = getHTMLElements();
+  const index = getRandomIndex(disneyQuotes);
+  const selectedQuote = disneyQuotes[index];
 
-  const randomIndex = Math.floor(Math.random() * images.length);
-  const chosenImages = images[randomIndex];
-  $randomImage.style = `background-image: url(./src/${chosenImages})`;
+  $quote.innerText = selectedQuote.quote;
+  $movie.innerText = selectedQuote.movie;
 }
 
-function getRandomQuotes() {
-  const { $quote, $movie } = getHTMLElements();
-  const quoteIndex = Math.floor(Math.random() * disneyQuotes.length);
-  const todaysQuote = disneyQuotes[quoteIndex];
+function changeQuoteBackgroundImage() {
+  const { $randomImage } = getHTMLElements();
 
-  $quote.innerText = todaysQuote.quote;
-  $movie.innerText = todaysQuote.movie;
+  const index = getRandomIndex(images);
+  const selectedImage = images[index];
+  $randomImage.style = `background-image: url(${BASE_URL}/${selectedImage})`;
 }
 
 /** Theme기능 (dark모드) */
-function switchTheme(e) {
+function switchBrowserTheme(e) {
   const { THEME_KEY, THEME, DARK, LIGHT } = getConstants(CONSTANTS.DARK_MODE);
   const isDarkMode = e.target.checked;
 
@@ -506,7 +513,7 @@ function switchTheme(e) {
   }
 }
 
-function getCurrentThemeInLocalStorage() {
+function getLocalStorageCurrentTheme() {
   const { $toggleSwitch } = getHTMLElements();
   const { THEME_KEY, THEME, DARK } = getConstants(CONSTANTS.DARK_MODE);
   const currentTheme = localStorage.getItem(THEME);
