@@ -4,7 +4,9 @@
 ## Summary
 - 인원 : 개인프로젝트 (1인)
 - 기여 : 기획, 디자인, 프론트앤드
-- 작업기간 : 2021.10. <br/><br/>
+- Release note
+  - 2021.11.28 JavaScript 작업 및 배포
+  - 2023.04.10 TypeScript로 마이그레이션
 
 ## Features
 - 입력받은 사용자의 이름을 화면에 출력
@@ -16,7 +18,8 @@
 - CSS : Grid레이아웃, glass morphism 적용<br/><br/>
 
 ## Doc
-- tool: `JavaScript`<br/><br/>
+- tool: `JavaScript`, `TypeScript`<br/><br/>
 
 ## 🔗프로젝트 관련 링크
-- [프로젝트url](sukyoungshin.github.io/momentum/)
+- [프로젝트 배포링크](sukyoungshin.github.io/momentum/)
+- [작업하며 배운 내용](https://github.com/sukyoungshin/momentum/wiki)
