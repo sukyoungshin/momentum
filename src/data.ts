@@ -1,12 +1,6 @@
-export const BASE_URL = "./src/assets";
-
-export const CONSTANTS = {
-  LOGIN_POPUP: "LOGIN_POPUP",
-  TODO: "TODO",
-  DARK_MODE: "DARK_MODE",
-};
 
 // random quote & image
+export type DisneyQuotes = typeof disneyQuotes;
 export const disneyQuotes = [
   {
     quote:

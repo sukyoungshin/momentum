@@ -1,14 +1,16 @@
 import {
+  constantKeys,
+  BASE_URL,
   getHTMLElements,
   createGeoHTMLElements,
   createWeatherHTMLElements,
   createTodoHTMLElements,
   getConstants,
   getRandomIndex,
+  ToDo,
+  toDo,
 } from "./utils.js";
 import {
-  CONSTANTS,
-  BASE_URL,
   colors,
   disneyQuotes,
   images,
@@ -18,17 +20,20 @@ import {
 } from "./data.js";
 
 window.addEventListener("load", init);
+
 function init() {
   const { $toDoForm, $toggleSwitch } = getHTMLElements();
+  if (!$toDoForm || !$toggleSwitch) return;
 
   /* LocalStorage 정보 불러오기 */
   getLocalStorageUserName();
   getLocalStorageToDos();
   getLocalStorageBrowserTheme();
 
+  /* 크리스마스 카운터 및 날짜정보 */
+  setChristMasCounter();
+  setTodayInformationAndTime();
   /* Set Interval */
-  window.addEventListener("load", setChristMasCounter());
-  window.addEventListener("load", setTodayInformationAndTime());
   setInterval(setChristMasCounter, 1000);
   setInterval(setTodayInformationAndTime, 1000 * 60);
 
@@ -47,13 +52,17 @@ function init() {
 /** 현재연도 업데이트 (footer) */
 function updateThisYear() {
   const { $thisYear } = getHTMLElements();
-  $thisYear.innerText = new Date().getFullYear();
+  if (!!$thisYear) {
+    $thisYear.innerText = String(new Date().getFullYear());
+  }
 }
 
 /** LocalStorage에서 유저정보 반환 */
 function getLocalStorageUserName() {
   const { $modal, $loginForm, $loginInput } = getHTMLElements();
-  const { HIDDEN, USERNAME } = getConstants(CONSTANTS.LOGIN_POPUP);
+  if (!$modal || !$loginForm || !$loginInput) return;
+
+  const { HIDDEN, USERNAME } = getConstants(constantKeys.LOGIN_POPUP);
   const savedUserName = localStorage.getItem(USERNAME);
 
   if (savedUserName === null) {
@@ -69,18 +78,20 @@ function getLocalStorageUserName() {
 /** 팝업창 submit 버튼색상 변경 */
 function changePopUpButtonColor() {
   const { $loginInput, $loginButton } = getHTMLElements();
-  const { ACTIVE } = getConstants(CONSTANTS.LOGIN_POPUP);
+  if (!$loginInput || !$loginButton) return;
+  const { ACTIVE } = getConstants(constantKeys.LOGIN_POPUP);
 
   if ($loginInput.value.length >= 1) {
-    $loginButton.classList.add(ACTIVE);
+    $loginButton?.classList.add(ACTIVE);
   } else {
-    $loginButton.classList.remove(ACTIVE);
+    $loginButton?.classList.remove(ACTIVE);
   }
 }
 
 /** 프로필 영역에 유저이름 나타냄 */
-function setUserNameOnProfile(username) {
+function setUserNameOnProfile(username: string) {
   const { $greeting } = getHTMLElements();
+  if (!$greeting) return;
 
   const index = getRandomIndex(randomEmojis);
   const randomEmoji = randomEmojis[index];
@@ -88,10 +99,11 @@ function setUserNameOnProfile(username) {
 }
 
 /** 로그인버튼 제출 */
-function submitUserNameInPopUp(e) {
+function submitUserNameInPopUp(e: SubmitEvent) {
   e.preventDefault();
   const { $modal, $loginInput } = getHTMLElements();
-  const { HIDDEN, USERNAME } = getConstants(CONSTANTS.LOGIN_POPUP);
+  if (!$modal || !$loginInput) return;
+  const { HIDDEN, USERNAME } = getConstants(constantKeys.LOGIN_POPUP);
 
   $modal.classList.add(HIDDEN);
   const username = $loginInput.value;
@@ -114,6 +126,8 @@ function changeBodyBackgroundColor() {
 /** 현재 시간과 날짜를 셋팅 */
 function setTodayInformationAndTime() {
   const { $date, $time } = getHTMLElements();
+  if (!$date || !$time) return;
+
   const { year, month, date, day } = getCurrentDate();
   const time = getCurrentTime();
 
@@ -153,8 +167,9 @@ function fetchGeolocationAndWeather() {
     if (!navigator.geolocation) {
       alert("Geolocation is not supported by your browser");
     } else {
-      const $city = document.querySelector("#city span:first-child");
-      const $weather = document.querySelector("#weather span");
+      const $city = document.querySelector<HTMLSpanElement>("#city span:first-child");
+      const $weather = document.querySelector<HTMLSpanElement>("#weather span");
+      if (!$city || !$weather) return;
 
       $city.innerText = "Loading...";
       $weather.innerText = "Loading...";
@@ -166,12 +181,13 @@ function fetchGeolocationAndWeather() {
   }
   getCurrentGeolocation();
 
-  function fetchTodayWeather(url) {
+  function fetchTodayWeather(url: string) {
     fetch(url)
       .then((response) => response.json())
       .then((data) => {
         const { $city, $todayWeather, $weatherIconWrapper, $iconImg } =
           createGeoHTMLElements();
+        if (!$city || !$todayWeather) return;
 
         // data fetch
         const { country } = data.sys;
@@ -180,17 +196,17 @@ function fetchGeolocationAndWeather() {
         const { temp: cityTemperature } = data.main;
         const { icon } = data.weather[0]; // weather icon
         const iconURL = `http://openweathermap.org/img/wn/${icon}.png`;
-        $weatherIconWrapper.append($iconImg);
+        $weatherIconWrapper?.append($iconImg);
         $iconImg.src = iconURL;
         $iconImg.setAttribute("alt", "오늘의 날씨");
 
-        // data binding
+        // data binding        
         $city.innerText = `${cityName}, ${country}`;
         $todayWeather.innerHTML = `${cityTemperature}℃ / ${cityWeather}`;
       });
   }
 
-  function fetch7DaysWeather(url) {
+  function fetch7DaysWeather(url: string) {
     fetch(url)
       .then((response) => response.json())
       .then((data) => {
@@ -218,12 +234,12 @@ function fetchGeolocationAndWeather() {
           $div.append($span1);
           $div.append($span2);
           $div.append($iconImg);
-          $weeklyWeatherWrapper.append($div);
+          $weeklyWeatherWrapper?.append($div);
         }
       });
   }
 
-  function successGeolocation(position) {
+  function successGeolocation(position: { coords: { latitude: number; longitude: number; }; }) {
     const API_KEY = "ed17d8f6a50a842c1d4b16c020da9844";
     const {
       coords: { latitude: lat, longitude: lon },
@@ -241,28 +257,29 @@ function fetchGeolocationAndWeather() {
 }
 
 /** TO DO */
-let toDos = [];
+let toDos: typeof toDo[] = [];
 function saveToDos() {
-  const { TODOS } = getConstants(CONSTANTS.TODO);
+  const { TODOS } = getConstants(constantKeys.TODO);
   localStorage.setItem(TODOS, JSON.stringify(toDos));
 }
 
-function deleteToDo(e) {
-  const li = e.target.parentElement;
+function deleteToDo(e: MouseEvent) {
+  const target = e.currentTarget as Element;
+  const li = target.parentElement as HTMLElement;
   li.remove();
   toDos = toDos.filter((toDo) => toDo.id !== parseInt(li.id, 10));
   saveToDos();
 }
 
-function addToDo(newToDo) {
+function addToDo(newToDo: ToDo) {
   const { $toDoList } = getHTMLElements();
   const { $li, $checkbox, $label, $span, $button } = createTodoHTMLElements();
   const randomId = Math.floor(Math.random() * 1000);
 
   // id 및 클래스명 부여
-  $li.id = newToDo.id; // li에 id값 부여
+  $li.id = String(newToDo.id); // li에 id값 부여
   $label.setAttribute("for", `${randomId}`); // checkbox와 label 연동
-  $checkbox.id = randomId;
+  $checkbox.id = `${randomId}`;
 
   $span.innerText = newToDo.text;
   $button.addEventListener("click", deleteToDo);
@@ -271,19 +288,21 @@ function addToDo(newToDo) {
   $li.append($label);
   $li.append($span);
   $li.append($button);
-  $toDoList.append($li);
+  $toDoList?.append($li);
 }
 
-function resetToDoInput($input) {
+function resetToDoInput($input: HTMLInputElement) {
   $input.value = "";
 }
 
-function submitToDo(e) {
+function submitToDo(e: SubmitEvent) {
   e.preventDefault();
   const { $toDoInput } = getHTMLElements();
+  if (!$toDoInput) return;
+
   const newToDo = {
     id: Date.now(),
-    text: $toDoInput.value,
+    text: $toDoInput?.value,
   };
   toDos.push(newToDo);
   addToDo(newToDo);
@@ -292,7 +311,7 @@ function submitToDo(e) {
 }
 
 function getLocalStorageToDos() {
-  const { TODOS } = getConstants(CONSTANTS.TODO);
+  const { TODOS } = getConstants(constantKeys.TODO);
   const savedToDos = localStorage.getItem(TODOS);
 
   if (savedToDos !== null) {
@@ -310,13 +329,13 @@ function fetchFakePosts() {
   fetch(url)
     .then((response) => response.json())
     .then((json) => {
-      const $ul = document.querySelector("#dummy ul");
+      const $ul = document.querySelector<HTMLUListElement>("#dummy ul");
 
-      json.map((item) => {
+      json.map((item: { title: string }) => {
         const { title } = item;
         const $li = document.createElement("li");
         $li.innerText += `${title}`;
-        $ul.append($li);
+        $ul?.append($li);
       });
     });
 }
@@ -351,6 +370,7 @@ function getChristMasInformation() {
 
 function setChristMasCounter() {
   const { $clockTitle } = getHTMLElements();
+  if (!$clockTitle) return;
   const {
     theDay,
     todayDecember,
@@ -371,6 +391,8 @@ function setChristMasCounter() {
 /** Random Quote */
 function fetchRandomQuotes() {
   const { $quote, $movie } = getHTMLElements();
+  if (!$quote || !$movie) return;
+
   const index = getRandomIndex(disneyQuotes);
   const selectedQuote = disneyQuotes[index];
 
@@ -380,16 +402,18 @@ function fetchRandomQuotes() {
 
 function changeQuoteBackgroundImage() {
   const { $randomImage } = getHTMLElements();
+  if (!$randomImage) return;
 
   const index = getRandomIndex(images);
   const selectedImage = images[index];
-  $randomImage.style = `background-image: url(${BASE_URL}/${selectedImage})`;
+
+  $randomImage.style.backgroundImage = `url(${BASE_URL}/${selectedImage})`;
 }
 
 /** Theme기능 (dark모드) */
-function switchBrowserTheme(e) {
-  const { THEME_KEY, THEME, DARK, LIGHT } = getConstants(CONSTANTS.DARK_MODE);
-  const isDarkMode = e.target.checked;
+function switchBrowserTheme(e: Event) {
+  const { THEME_KEY, THEME, DARK, LIGHT } = getConstants(constantKeys.DARK_MODE);
+  const isDarkMode = (<HTMLInputElement>e.currentTarget).checked;
 
   if (isDarkMode) {
     document.documentElement.setAttribute(THEME_KEY, DARK);
@@ -402,7 +426,9 @@ function switchBrowserTheme(e) {
 
 function getLocalStorageBrowserTheme() {
   const { $toggleSwitch } = getHTMLElements();
-  const { THEME_KEY, THEME, DARK } = getConstants(CONSTANTS.DARK_MODE);
+  if (!$toggleSwitch) return;
+
+  const { THEME_KEY, THEME, DARK } = getConstants(constantKeys.DARK_MODE);
   const currentTheme = localStorage.getItem(THEME);
 
   if (!!currentTheme) {

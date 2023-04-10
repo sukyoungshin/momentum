@@ -1,0 +1,16 @@
+{
+  "name": "typescript-project",
+  "author": "sukyoung",
+  "version": "1.0.0",
+  "description": "",
+  "main": "built/index.js",
+  "scripts": {
+    "build": "npx tsc",
+    "local": "npx tsc --watch"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.0.4"
+  }
+}
