@@ -1,5 +1,6 @@
 
 // random quote & image
+export type DisneyQuotes = typeof disneyQuotes;
 export const disneyQuotes = [
   {
     quote:
