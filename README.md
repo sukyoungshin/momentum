@@ -23,4 +23,4 @@
 
 ## 🔗프로젝트 관련 링크
 - [프로젝트 배포링크](sukyoungshin.github.io/momentum/)
-- [작업하며 겪은 이슈 및 해결방안](https://github.com/sukyoungshin/momentum/wiki)
+- [마이그레이션 작업하며 겪은 이슈 및 솔루션](https://github.com/sukyoungshin/momentum/wiki)
