@@ -4,17 +4,11 @@
     "allowJs": true,
     "checkJs": true,
     "target": "ES6",
-    "lib": [
-      "es2017",
-      "dom"
-    ],
+    "lib": ["es2017", "dom"],
     "strict": true,
     "noImplicitAny": true,
+    "module": "ES2015"
   },
-  "include": [
-    "./src/**/*"
-  ],
-  "exclude": [
-    "node_modules"
-  ],
+  "include": ["./src/**/*"],
+  "exclude": ["node_modules"]
 }
